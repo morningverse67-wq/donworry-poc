@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>돈 워리 · 내 상황 맞춤 보험 설계 (PoC)</title>
+<title>돈 워리 · 내 보험 보장 확인 (PoC)</title>
 <style>
 :root{--navy:#2f6b4f;--blue:#2f6b4f;--sky:#e8f0eb;--yellow:#fff2cc;--ink:#1f2a24;--sub:#5b6577;--line:#e4e0d6;--bg:#f5f3ee;--red:#d64545;--green:#2f8f5b;--orange:#e08a2e;--A:#e08a2e;--B:#3d6fa8;--C:#2f8f5b;--D:#8a4fd0;font-size:16px}
 html.big{font-size:19px}
@@ -546,7 +546,7 @@ function vPro(){
   </div>`;
 }
 
-// 운영 목표: 비밀번호로 암호화한 본문 (PBKDF2-SHA256 20만 회 + AES-256-GCM, 원문은 donworry-goals.src.html)
+// 운영 목표: 비밀번호로 암호화한 본문 (PBKDF2-SHA256 20만 회 + AES-256-GCM)
 const GOALS_ENC=null; // 운영 목표 본문은 공개 저장소에서 뺐다
 async function openGoals(pw){
   const b=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
@@ -616,7 +616,7 @@ function vRetireResult(){
   const nudge = r.imported ? '' : `<div class="nudge">${r.loading?`<span><span class="loading"></span>${S.forParent?'부모님 인증을 기다리는 중이에요...':'가입한 보험을 불러오는 중이에요...'}</span>`:`<span>가입한 보험을 불러와야 보장을 확인할 수 있어요.</span><button class="btn sm" data-act="import">${S.forParent?'부모님께 인증 요청 보내기':'내 보험 불러오기'}</button>`}</div>`;
   const needCard=`<div class="card"><h2>지금 내 보험, 괜찮은가요?</h2><div class="sub" style="margin-bottom:.9rem">걱정거리와 이미 가입한 보험을 비교해서, 새로 준비할 것만 골랐어요.</div>
     <div class="needs">${an.map(x=>`<div class="need"><div class="nh"><b>${CAT[x.cat].label}</b><span class="tag t-${x.status}">${{ok:'준비됨',gap:'공백 있음',none:'없음',dup:'이미 있음'}[x.status]}</span></div><div class="sub">${x.text}</div></div>`).join('')}</div></div>`;
-  const exPrem=EXIST.filter(e=>r.existing.includes(e.id)).reduce((t,e)=>t+(e.prem||0),0); // ponytail: 기존 보험료는 지금 금액 기준
+  const exPrem=EXIST.filter(e=>r.existing.includes(e.id)).reduce((t,e)=>t+(e.prem||0),0); // 기존 보험료는 지금 금액 기준
   const combos=needs.length?getCombos(needs):null, rec=combos?recommend(combos):null, rc=combos?combos[rec.key]:null;
   const PLAIN={medical:'병원비',cancer:'암',brainheart:'뇌졸중·심장병',dementia:'치매',care:'간병비',pension:'노후 생활비(연금)',death:'가족에게 남길 돈'};
   const okL=an.filter(x=>x.status==='ok'||x.status==='dup').map(x=>PLAIN[x.cat]);
@@ -725,7 +725,7 @@ function renewHTML(){
   const r=S.r, a0=r.age, ex=EXIST.filter(e=>r.existing.includes(e.id));
   const ren=ex.filter(e=>e.prem), done=ex.filter(e=>!e.prem);
   const ages=[...new Set([a0,65,75,85])].filter(a=>a>=a0).sort((x,y)=>x-y);
-  const at=(e,a)=>e.prem*Math.pow(1.05,a-a0); // ponytail: 매년 5% 인상 가정, 실제 갱신률 데이터가 생기면 교체
+  const at=(e,a)=>e.prem*Math.pow(1.05,a-a0); // 가정: 매년 5% 인상, 실제 갱신률 데이터가 생기면 교체
   const nm=e=>e.name.replace(/ \(.*\)$/,'');
   return `<div class="card"><h2>지금 보험료, 계속 낼 수 있나요?</h2>
   ${ren.length?`<table class="agetbl"><tr><th>나이</th>${ren.map(e=>`<th>${nm(e)}</th>`).join('')}</tr>${ages.map(a=>`<tr><th>${a===a0?'지금':a+'세'}</th>${ren.map(e=>`<td>월 ${man(at(e,a))}</td>`).join('')}</tr>`).join('')}</table>
