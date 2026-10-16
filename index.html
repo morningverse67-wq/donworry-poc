@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>돈 워리 · 내 상황 맞춤 보험 설계 (PoC)</title>
+<style>
+:root{--navy:#2f6b4f;--blue:#2f6b4f;--sky:#e8f0eb;--yellow:#fff2cc;--ink:#1f2a24;--sub:#5b6577;--line:#e4e0d6;--bg:#f5f3ee;--red:#d64545;--green:#2f8f5b;--orange:#e08a2e;--A:#e08a2e;--B:#3d6fa8;--C:#2f8f5b;--D:#8a4fd0;font-size:16px}
+html.big{font-size:19px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Pretendard,-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;color:var(--ink);background:var(--bg);line-height:1.55;-webkit-font-smoothing:antialiased}
+button,select,input{font:inherit;color:inherit}
+header{background:var(--navy);color:#fff;border-bottom:0;position:sticky;top:0;z-index:20}
+.hwrap{max-width:1080px;margin:0 auto;padding:.8rem 1.25rem;display:flex;align-items:center;gap:1rem}
+.logo{font-weight:800;font-size:1.25rem;letter-spacing:-.02em;cursor:pointer;display:flex;align-items:center;gap:.5rem}
+.logo small{font-weight:500;font-size:1rem;color:#d7e6dc;margin-left:.25rem}
+.hsp{flex:1}
+.hbtn{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.45);color:#fff;border-radius:10px;padding:.4rem .9rem;cursor:pointer;font-size:1rem}
+.hbtn.on{background:#fff;color:var(--navy);border-color:#fff;font-weight:700}
+.logo,.hbtn{white-space:nowrap;flex-shrink:0}
+@media(max-width:820px){.hwrap{gap:.5rem;padding:.7rem 1rem}.logo small{display:none}.hbtn{padding:.4rem .7rem}}
+@media(max-width:360px){.hwrap{gap:.35rem;padding:.7rem .75rem}.hbtn{padding:.4rem .55rem}.home h1 br{display:none}}
+.wrap{max-width:1080px;margin:0 auto;padding:1.5rem 1.25rem 4rem}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:1.5rem;margin-bottom:1.25rem}
+h1{font-size:2rem;line-height:1.3;margin:.25rem 0 .5rem;letter-spacing:-.03em}
+h2{font-size:1.3rem;margin:0 0 .25rem;letter-spacing:-.02em}
+h3{font-size:1.05rem;margin:0 0 .5rem}
+.sub{color:var(--sub)}
+.small{font-size:.85rem}
+.muted{color:#8a93a3}
+.row{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+@media(max-width:820px){.grid2,.grid3,.grid4{grid-template-columns:1fr}h1{font-size:1.6rem}}
+.btn{border:0;border-radius:12px;padding:.8rem 1.4rem;font-weight:700;cursor:pointer;background:var(--navy);color:#fff;font-size:1rem}
+.btn:hover{filter:brightness(1.1)}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid #c9d4e3}
+.btn.sm{padding:.45rem .9rem;font-size:.85rem;border-radius:10px}
+.link{background:none;border:0;color:var(--blue);cursor:pointer;padding:0;text-decoration:underline;font-size:.9rem}
+.home{max-width:720px}
+.home h1{font-size:2rem;line-height:1.4;margin:1.25rem 0 .75rem;letter-spacing:-.02em;word-break:keep-all}
+.home .lead{font-size:1.125rem;line-height:1.6;color:#3f4a5c;margin:0 0 1.75rem;word-break:keep-all}
+.pick{background:#fff;border:1px solid #e1ddd2;border-radius:16px;overflow:hidden}
+.pick button{display:block;width:100%;text-align:left;background:#fff;border:0;border-top:1px solid #ebe8e0;padding:1.25rem 1.5rem;cursor:pointer}
+.pick button:first-child{border-top:0}
+.pick button:hover{background:#eef4f0}
+.pick button:focus-visible{background:#eef4f0;outline:3px solid var(--navy);outline-offset:-3px}
+.pick .t{display:block;font-size:1.25rem;font-weight:700;line-height:1.4;color:var(--navy);word-break:keep-all}
+.pick .d{display:block;font-size:1.0625rem;line-height:1.55;color:#3f4a5c;margin-top:.3rem;word-break:keep-all}
+.home .demo{margin:1.25rem 0 0;font-size:1.0625rem;line-height:1.6;color:#3f4a5c}
+.home .demo button{background:none;border:0;padding:.25rem 0;margin-right:.5rem;color:var(--navy);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+.home h2{font-size:1.3rem;margin:3.5rem 0 1rem;word-break:keep-all}
+.prolink{margin:2.5rem 0 0;padding-top:1.25rem;border-top:1px solid #e4e0d6;color:#3f4a5c;font-size:1.0625rem}
+.prolink button{background:none;border:0;padding:.25rem 0;margin-left:.25rem;color:var(--navy);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+.tiers{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.tier{background:#fff;border:1px solid #e1ddd2;border-radius:12px;padding:1.25rem 1.5rem;display:flex;flex-direction:column}
+.tier h3{font-size:1.15rem;margin:0 0 .4rem}
+.tier .price{font-size:1.5rem;color:var(--navy)}
+.tier p{margin:.3rem 0 .8rem;color:#3f4a5c;word-break:keep-all}
+.tier ul{margin:0 0 1.2rem;padding-left:1.2rem;line-height:1.8;flex:1;word-break:keep-all}
+.tier .btn{align-self:flex-start}
+.pw{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.4rem}
+.pw input{font-size:1.125rem;padding:.7rem .9rem;border:1.5px solid #d6d1c4;border-radius:10px;min-width:0;flex:1;max-width:16rem}
+.err{color:#b02a2a;font-weight:700;min-height:1.5em;margin:0 0 1rem}
+.goals h2{margin-top:2rem}
+.goals .goal{background:#fff;border:1px solid #e1ddd2}
+.goals .goal th,.goals .goal td{font-size:1rem;padding:.8rem 1rem;border-bottom:1px solid #efece5;word-break:keep-all}
+.goals .goal th{width:40%;color:#3f4a5c;font-weight:600}
+.goals .goal td{font-weight:700;color:var(--navy)}
+.goals .sub{color:#3f4a5c;word-break:keep-all}
+.goals .todo{padding-left:1.2rem;line-height:1.9;font-size:1.0625rem;word-break:keep-all}
+@media(max-width:820px){.tiers{grid-template-columns:1fr}}
+.pro{background:#fff;border:1px solid #e1ddd2;border-radius:12px;padding:1.25rem 1.5rem}
+.pro ul{margin:0 0 1rem;padding-left:1.2rem;line-height:1.8;font-size:1.0625rem;word-break:keep-all}
+.pro .price{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem .75rem;padding-top:1rem;border-top:1px solid #ebe8e0;margin-bottom:1rem}
+.pro .price b{font-size:1.5rem;color:var(--navy)}
+.pro .price span{color:#3f4a5c;word-break:keep-all}
+.diff{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e1ddd2;font-size:1rem;line-height:1.55}
+.diff th,.diff td{padding:1rem 1.1rem;font-size:1rem;border-top:1px solid #ebe8e0;border-bottom:0;text-align:left;vertical-align:top;word-break:keep-all}
+.diff thead th{border-top:0;border-bottom:2px solid var(--navy);color:var(--ink);font-weight:700}
+.diff tbody th{width:24%;color:#3f4a5c;font-weight:600}
+.diff td.old{color:#3f4a5c}
+.diff td.new{color:var(--navy);font-weight:700}
+@media(max-width:820px){
+  .home h1{font-size:1.65rem}
+  .pick button{padding:1.1rem 1.15rem}
+  .diff thead tr,.diff tbody tr{display:grid;grid-template-columns:1fr 1fr}
+  .diff thead th:first-child{display:none}
+  .diff tbody th{grid-column:1/-1;width:auto;padding-bottom:0;font-size:1rem}
+  .diff tbody td{border-top:0}
+  .diff th,.diff td{padding:.85rem 1rem}
+}
+.field{margin-bottom:1.5rem}
+.field>label,.flabel{display:block;font-weight:700;margin-bottom:.55rem}
+.flabel .hint{font-weight:400;color:var(--sub);font-size:.85rem;margin-left:.35rem}
+.seg{display:flex;flex-wrap:wrap;gap:.5rem}
+.seg button{border:1.5px solid #d6d1c4;background:#fff;border-radius:10px;padding:.55rem 1rem;cursor:pointer}
+.seg button.on{border-color:var(--navy);background:var(--navy);color:#fff;font-weight:700}
+.opt{border:1.5px solid #d6d1c4;background:#fff;border-radius:12px;padding:.8rem 1rem;cursor:pointer;text-align:left;width:100%}
+.opt.on{border-color:var(--navy);background:var(--sky)}
+.opt small{display:block;color:var(--sub)}
+.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{border:1.5px solid #d6d1c4;background:#fff;border-radius:999px;padding:.45rem .95rem;cursor:pointer}
+.chip.on{background:var(--yellow);border-color:#e0c060;font-weight:700}
+.bignum{font-size:2rem;font-weight:800;color:var(--navy)}
+input[type=range]{width:100%;accent-color:var(--navy)}
+input[type=number],input[type=date],select{border:1.5px solid #d6d1c4;border-radius:10px;padding:.5rem .7rem;background:#fff}
+.exist{border:1px dashed #b9c6d8;border-radius:12px;padding:1rem;background:#fafcff}
+.exitem{display:flex;gap:.6rem;align-items:center;padding:.45rem 0;border-bottom:1px solid #efece5}
+.exitem:last-child{border-bottom:0}
+.imp-card{border:2px solid var(--navy)}
+.rf .title{font-size:1.6rem;margin:0 0 .3rem;word-break:keep-all}
+.rf .sub{font-size:1.0625rem;color:#3f4a5c;word-break:keep-all}
+.rf .small,.rf .link{font-size:1rem}
+.rf .muted{color:#5b6577}
+.rf .flabel{font-size:1.0625rem;word-break:keep-all}
+.rf .flabel .hint{display:block;margin:.15rem 0 0;font-size:1rem;color:#3f4a5c;font-weight:400}
+.rf .seg button{padding:.6rem 1.1rem}
+.rf .opt{padding:.9rem 1rem}
+.rf .opt b{display:block;font-size:1.0625rem;word-break:keep-all}
+.rf .opt small{font-size:1rem;color:#3f4a5c;margin-top:.2rem;word-break:keep-all}
+.rf .opt.on{border:2px solid var(--navy);background:#eef4f0}
+.rf .chips{gap:.6rem}
+.rf .chip{border-radius:10px;padding:.6rem 1.1rem}
+.rf .chip.on{background:#eef4f0;border:2px solid var(--navy);color:var(--navy)}
+.rf .exist{border:1px solid #e1ddd2;background:#fff}
+.rf .exitem{padding:.6rem 0}
+.rf .exitem input{width:1.2rem;height:1.2rem;flex-shrink:0}
+.imp-card h3{font-size:1.25rem;margin:0 0 .3rem;word-break:keep-all}
+.imp-card .sub{font-size:1.0625rem;color:#3f4a5c;word-break:keep-all}
+.imp .btn{font-size:1.125rem;padding:.9rem 1.6rem;word-break:keep-all}
+.imp p{margin:.6rem 0 0;color:#3f4a5c;word-break:keep-all}
+.nudge{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.6rem 1rem;padding:.9rem 1rem;margin-bottom:1rem;border:1px solid #e1ddd2;border-radius:12px;background:#f5f7fa;font-weight:700;word-break:keep-all}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;border-radius:6px;padding:.1rem .45rem;vertical-align:middle}
+.t-ok{background:#e2f0d9;color:#2c6b1f}.t-gap{background:#fde2e2;color:#b02a2a}.t-none{background:#fff2cc;color:#7f6000}.t-dup{background:#e8ecf2;color:#47536a}
+.t-R{background:#fdebd7;color:#a35a10}.t-N{background:#e2eee6;color:#2f6b4f}.t-P{background:#e2f0d9;color:#2c6b1f}
+.sumbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.pill{background:var(--sky);color:var(--navy);border-radius:999px;padding:.3rem .8rem;font-size:.9rem;font-weight:600}
+.needs{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:.75rem}
+.need{border:1px solid var(--line);border-radius:12px;padding:.8rem 1rem}
+.need b{display:block}
+.combo{border:2px solid var(--line);border-radius:16px;padding:1.1rem 1.2rem;cursor:pointer;background:#fff;position:relative;text-align:left;width:100%;display:flex;flex-direction:column;justify-content:flex-start}
+.combo .kv span{white-space:nowrap;margin-right:.5rem}
+.combo.on{border-color:var(--navy);box-shadow:0 6px 20px rgba(31,58,95,.12)}
+.combo .bar{height:6px;border-radius:6px;margin:-.2rem 0 .8rem}
+.combo .nm{font-weight:800;font-size:1.1rem}
+.combo .pr{font-size:1.6rem;font-weight:800;margin:.4rem 0 .1rem}
+.combo .kv{display:flex;justify-content:space-between;font-size:.9rem;padding:.2rem 0;border-top:1px solid #f0f2f6}
+.badge{position:absolute;top:-.7rem;right:1rem;background:#ffd666;color:var(--navy);font-weight:800;font-size:.78rem;border-radius:999px;padding:.15rem .7rem}
+.badge.warn{background:#fde2e2;color:#b02a2a;right:auto;left:1rem}
+.insight{background:var(--yellow);border-radius:12px;padding:.9rem 1.1rem;font-weight:700;margin:.75rem 0}
+.legend{display:flex;flex-wrap:wrap;gap:1rem;font-size:.85rem;color:var(--sub)}
+.legend i{display:inline-block;width:.9rem;height:.9rem;border-radius:3px;vertical-align:-2px;margin-right:.3rem}
+.snap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin:.75rem 0}
+.stat{background:var(--sky);border-radius:12px;padding:.8rem 1rem}
+.stat .v{font-size:1.45rem;font-weight:800;color:var(--navy)}
+.blist{margin:.25rem 0 0;padding-left:1.1rem}
+.blist li{margin:.2rem 0}
+.blist.end li{color:var(--red)}
+table{border-collapse:collapse;width:100%}
+th,td{padding:.6rem .6rem;border-bottom:1px solid #efece5;text-align:left;vertical-align:middle}
+th{font-size:.85rem;color:var(--sub);font-weight:600}
+.adj td{font-size:.95rem}
+.adj tr.off td{opacity:.45}
+.mini{display:inline-flex;border:1px solid #d6d1c4;border-radius:8px;overflow:hidden}
+.mini button{border:0;background:#fff;padding:.3rem .6rem;cursor:pointer;font-size:.85rem}
+.mini button.on{background:var(--navy);color:#fff}
+.mini button:disabled{opacity:.35;cursor:not-allowed}
+.plan th:first-child,.plan td:first-child{width:28%}
+.plan td.ok{color:var(--green);font-weight:700}
+.plan td.no{color:var(--red)}
+.plan .best{background:#f3f8ff}
+.lvl{font-size:.75rem;font-weight:800;border-radius:6px;padding:.1rem .45rem;margin-right:.4rem}
+.l-필수{background:#fde2e2;color:#b02a2a}.l-권장{background:#fff2cc;color:#7f6000}.l-참고{background:#e8ecf2;color:#47536a}
+.cta{display:flex;align-items:center;gap:1rem;background:var(--navy);color:#fff;border-radius:16px;padding:1.2rem 1.4rem}
+.cta .btn{background:#ffd666;color:var(--navy)}
+.toast{position:fixed;left:50%;bottom:2rem;transform:translateX(-50%);background:#1d2433;color:#fff;padding:.75rem 1.2rem;border-radius:12px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.modal-bg{position:fixed;inset:0;background:rgba(15,25,40,.45);display:flex;align-items:center;justify-content:center;z-index:40;padding:1rem}
+.modal{background:#fff;border-radius:18px;max-width:520px;width:100%;padding:1.5rem}
+.modal pre{white-space:pre-wrap;background:#f5f7fa;border-radius:10px;padding:1rem;font-family:inherit;font-size:.92rem;max-height:50vh;overflow:auto}
+.loading{display:inline-block;width:1rem;height:1rem;border:2px solid #c9d4e3;border-top-color:var(--navy);border-radius:50%;animation:sp 1s linear infinite;vertical-align:-3px;margin-right:.4rem}
+@keyframes sp{to{transform:rotate(360deg)}}
+footer{max-width:1080px;margin:0 auto;padding:0 1.25rem 2rem;color:#4a5568;font-size:1rem;line-height:1.6;word-break:keep-all}
+svg text{font-family:inherit}
+.rr .card h2{margin-bottom:.4rem;word-break:keep-all}
+.rr .sub{font-size:1.0625rem;color:#3f4a5c;word-break:keep-all}
+.rr .small{font-size:1rem}
+.rr .muted{color:#5b6577}
+.rr .summary{font-size:1.125rem;font-weight:700;color:var(--navy);word-break:keep-all}
+.rr .tag{background:none!important;padding:0;border-radius:0;font-size:1rem;font-weight:700}
+.rr .need .nh{display:flex;justify-content:space-between;gap:.75rem;align-items:baseline}
+.rr .need .sub{margin-top:.3rem}
+.rr .combo{border:1.5px solid #e1ddd2}
+.rr .combo.on{border:2px solid var(--navy);box-shadow:none;background:#f6f9f7}
+.rr .combo .nm{font-size:1.2rem}
+.rr .combo .rec{color:#2c6b1f;font-weight:700;margin:.15rem 0 .2rem;word-break:keep-all}
+.rr .combo .over{color:#b02a2a;font-weight:700;margin-bottom:.4rem}
+.rr .combo .kv{font-size:1rem;gap:.75rem;padding:.4rem 0}
+.rr .combo .kv span{white-space:normal;margin:0;word-break:keep-all}
+.rr td .tag{display:block;margin-top:.15rem}
+.rr .combo .kv b{white-space:nowrap}
+.rr .insight{background:none;padding:0;margin:.75rem 0 1rem;font-size:1.125rem;line-height:1.6;color:var(--ink);word-break:keep-all}
+.rr .legend{font-size:1rem;color:#3f4a5c;gap:.4rem 1.25rem}
+.rr .stat{background:#f5f7fa}
+.rr .blist li{margin:.35rem 0}
+.rr th,.rr td,.rr .adj td{font-size:1rem}
+.rr th{color:#3f4a5c}
+.rr .mini button{font-size:1rem;padding:.35rem .75rem}
+.rr .btn.sm,.rr .link{font-size:1rem}
+.rr .scroll{overflow-x:auto}
+.rr .chart svg{display:block}
+.rr .glist{display:none}
+.rr .grow{padding:.65rem 0;border-top:1px solid #efece5}
+.rr .glab{display:flex;flex-wrap:wrap;justify-content:space-between;gap:0 .75rem;font-weight:700;word-break:keep-all}
+.rr .glab.ex{font-weight:500;color:#3f4a5c}
+.rr .glab .rng{font-weight:500;color:#3f4a5c}
+.rr .gtrack{position:relative;height:1.1rem;margin-top:.4rem;background:#f0f2f6;border-radius:4px}
+.rr .gtrack i{position:absolute;top:0;bottom:0;border-radius:4px}
+.rr .gtrack i.gap{background:#fde2e2;border:1.5px solid #d64545}
+.rr .gtrack b{position:absolute;top:-.25rem;bottom:-.25rem;border-left:2px dashed var(--navy)}
+.rr .gtrack b.scr{border-left:3px solid #e0a800}
+.rr .gaxis{display:flex;justify-content:space-between;color:#3f4a5c;padding:.4rem 0;border-top:1px solid #efece5}
+.rr th,.rr td{word-break:keep-all}
+.rr .mini button,.rr td b{white-space:nowrap}
+.rr .alist{display:none}
+.rr .cover{list-style:none;margin:0;padding:0}
+.rr .cover li{padding:.8rem 0;border-bottom:1px solid #efece5;word-break:keep-all}
+.rr .cover li:last-child{border-bottom:0}
+.rr .cover .ch{display:flex;justify-content:space-between;align-items:baseline;gap:.75rem;margin-bottom:.2rem}
+.rr .cover .ch b{font-size:1.0625rem}
+.rr .cover .st{font-weight:800;white-space:nowrap}
+.rr .cover .st.ok{color:#2c6b1f}.rr .cover .st.part{color:#9a5b00}.rr .cover .st.no{color:#b02a2a}
+.rr .cover li>span{color:#3f4a5c}
+.rr .next{margin:.4rem 0 0;padding-left:1.3rem}
+.rr .next li{padding:.5rem 0;word-break:keep-all}
+.rr .next li b{display:block;font-size:1.0625rem}
+.rr .next li span{color:#3f4a5c}
+.rr table.agetbl th{word-break:keep-all;white-space:normal}
+.wiz .steps{color:#3f4a5c;font-weight:700;margin:.5rem 0 .3rem}
+.wiz .title{margin-bottom:1rem}
+.wiz .card{padding:1.5rem}
+.stepper{display:flex;align-items:center;gap:.75rem}
+.stepper button{flex-shrink:0;width:3.25rem;height:3.25rem;border-radius:12px;border:1.5px solid #d6d1c4;background:#fff;font-size:1.6rem;line-height:1;cursor:pointer;color:var(--navy)}
+.stepper .bignum{min-width:0;text-align:center;flex:1;max-width:5em}
+@media(max-width:360px){.wiz .card{padding:1rem}}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.rr .agetbl th,.rr .agetbl td{text-align:right;padding:.65rem .5rem;white-space:nowrap}
+.rr .agetbl tr>*:first-child{text-align:left}
+.rr .agetbl .on{font-weight:800;color:var(--navy);background:#eef4f0}
+.rr .addlist{list-style:none;margin:0;padding:0}
+.rr .addlist li{display:grid;grid-template-columns:1fr auto;gap:.15rem 1rem;padding:.75rem 0;border-bottom:1px solid #efece5;word-break:keep-all}
+.rr .addlist li span{grid-column:1/-1;color:#3f4a5c}
+.rr .addlist li em{font-style:normal;font-weight:700;white-space:nowrap}
+.rr .addlist li.tot{border-bottom:0;font-size:1.0625rem}
+.rr .easy{border:2px solid var(--navy)}
+.rr .easy ul{list-style:none;margin:.4rem 0 1rem;padding:0}
+.rr .easy li{display:flex;gap:1rem;padding:.6rem 0;border-bottom:1px solid #efece5;font-size:1.0625rem;word-break:keep-all}
+.rr .easy li b{flex:0 0 6.5em;color:#2c6b1f}
+.rr .easy li b.warn{color:#b02a2a}
+.rr .easy p{font-size:1.125rem;margin:0 0 1rem;word-break:keep-all}
+.rr .gloss summary{cursor:pointer;font-weight:700;color:var(--navy);padding:.3rem 0}
+.rr .gloss dl{margin:.6rem 0 0;display:grid;grid-template-columns:7em 1fr;gap:.5rem 1rem}
+.rr .gloss dt{font-weight:700}
+.rr .gloss dd{margin:0;color:#3f4a5c;word-break:keep-all}
+.rr .probar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:.6rem 1rem;padding:1rem 1.25rem;margin-bottom:1.25rem;border-radius:12px;background:#e8f0eb;color:var(--ink);border:1px solid #c9dccf}
+.rr .probar .sub{color:#3f4a5c}
+.rr .probar .btn{background:#fff}
+@media(max-width:560px){.rr .easy li{flex-direction:column;gap:.15rem}.rr .easy li b{flex:none}.rr .gloss dl{grid-template-columns:1fr;gap:.15rem}.rr .gloss dd{margin-bottom:.5rem}}
+.rr .lvl{background:none!important;padding:0;margin:.15rem 0 0;font-size:1rem;display:block}
+.rr .plan th .tag{display:block;margin-top:.3rem;word-break:keep-all}
+.rr .plan .best{background:#eef4f0}
+.rr .tneeds td b{white-space:normal;word-break:keep-all}
+.rr .cta{background:#fff;color:var(--ink);border:1px solid var(--line);flex-wrap:wrap}
+.rr .cta .btn{background:var(--navy);color:#fff}
+.rr input,.rf input[type=number],.rf input[type=date]{font-size:1rem}
+.rr .selh{font-size:1.15rem;margin:1.5rem 0 .6rem;padding-top:1.25rem;border-top:1px solid #ebe8e0;word-break:keep-all}
+.rr .arow.on>b{color:#9a6b00}
+.rr .arow{padding:.7rem 0;border-top:1px solid #efece5}
+.rr .arow>b{display:block;margin-bottom:.25rem}
+.rr .aval{display:grid;grid-template-columns:3.6em 1fr 6.6em;gap:.6rem;align-items:center;padding:.15rem 0;color:#3f4a5c}
+.rr .aval i{height:.8rem;background:#f0f2f6;border-radius:3px;overflow:hidden}
+.rr .aval s{display:block;height:100%}
+.rr .aval em{font-style:normal;white-space:nowrap;text-align:right}
+.rr .aval.on{color:var(--ink);font-weight:700}
+.rr .adj tr.off td{opacity:.65}
+@media(max-width:820px){
+  .rr .plan{min-width:560px}
+  .rr .tneeds,.rr .tneeds tbody,.rr .tneeds tr,.rr .tneeds td{display:block;width:auto!important}
+  .rr .tneeds tr{padding:.7rem 0;border-bottom:1px solid #efece5}
+  .rr .tneeds td{padding:0;border:0}
+  .rr .tneeds td+td{margin-top:.35rem}
+  .rr .snap{grid-template-columns:1fr}
+  .rr #ganttBox svg,.rr .lchart{display:none}
+  .rr .glist,.rr .alist{display:block}
+  .rr .adj,.rr .adj tbody,.rr .items,.rr .items tbody{display:block}
+  .rr .adj tr:first-child,.rr .items tr:first-child{display:none}
+  .rr .adj tr,.rr .items tr{display:grid;gap:.4rem .75rem;padding:.8rem 0;border-bottom:1px solid #efece5}
+  .rr .adj td,.rr .items td{display:block;padding:0;border:0}
+  .rr .adj tr{grid-template-columns:1.75rem 1fr;align-items:center}
+  .rr .adj td:nth-child(n+3){grid-column:2}
+  .rr .adj td:nth-child(5)::before{content:'지금 월 보험료 ';color:#3f4a5c}
+  .rr .items tr{grid-template-columns:1fr auto}
+  .rr .items tr:not(.tot) td:nth-child(2),.rr .items tr:not(.tot) td:nth-child(3){grid-column:1/-1}
+  .rr .items tr:not(.tot) td:nth-child(4){grid-column:2;grid-row:1;text-align:right}
+  .rr .items tr.tot td:first-child{text-align:left!important}
+  .rr .items td:first-child b{white-space:normal}
+}
+@media print{header,.noprint,footer{display:none!important}body{background:#fff}.card{break-inside:avoid;border-color:#ccc}}
+</style>
+</head>
+<body>
+<header><div class="hwrap">
+  <div class="logo" data-act="home">돈 워리<small>내 보험 보장 확인</small></div>
+  <div class="hsp"></div>
+  <button class="hbtn" id="bigBtn" data-act="big">글자 크게</button>
+  <button class="hbtn" data-act="home">처음으로</button>
+</div></header>
+<div class="wrap" id="app"></div>
+<footer>PoC 데모 화면이에요. 불러온 보험의 보험사 이름과 보험료, 보장 금액은 모두 설명을 위한 예시이고 실제 상품이 아니에요. 미래 보험료는 갱신 인상률을 가정해서 계산한 예상치예요.</footer>
+
+<script>
+/* ---------------- 상태 ---------------- */
+const S = {
+  view:'home', big:false, forParent:false,
+  r:{age:55, gender:'M', health:'meds', target:90, budget:30, concerns:[], imported:false, loading:false, existing:[]},
+  sel:null, custom:null, snap:75,
+  t:{dest:'eu', days:9, who:'parents', style:'tour', age:32, depart:''}
+};
+
+/* ---------------- 노후 설계 데이터 (예시) ---------------- */
+const CATS = ['medical','cancer','brainheart','dementia','care','pension','death'];
+const CAT = {
+  medical:{label:'실손의료비', concern:'병원비'},
+  cancer:{label:'암 진단비', concern:'암 같은 큰 병'},
+  brainheart:{label:'뇌·심장 진단비', concern:'뇌졸중·심장질환'},
+  dementia:{label:'치매 보장', concern:'치매'},
+  care:{label:'간병비', concern:'간병이 필요해질 때'},
+  pension:{label:'연금', concern:'노후 생활비'},
+  death:{label:'사망보장', concern:'가족에게 남길 돈'}
+};
+const HEALTH = {
+  healthy:{label:'건강해요', desc:'특별히 먹는 약이나 입원 이력이 없어요', m:1, med:1, tag:'일반심사'},
+  meds:{label:'약을 먹고 있어요', desc:'고혈압·당뇨·고지혈증 등', m:1.3, med:1.6, tag:'간편심사'},
+  hosp:{label:'최근 5년 안에 입원·수술했어요', desc:'수술·입원 기록이 있어도 괜찮아요', m:1.6, med:2.0, tag:'유병자 간편심사'}
+};
+// base = 55세 기준 월 보험료(원) / per 단위
+const PROD = {
+  medical:{R:{ins:'누리화재', name:'실손의료비', base:45000, annual:1.05, end:100}},
+  cancer:{N:{ins:'한빛생명', name:'암 진단비 · 비갱신 20년납', base:28000, per:1000, pay:20, end:100},
+          R:{ins:'다온손해보험', name:'암 진단비 · 10년 갱신', base:9000, per:1000, every:10, rate:1.7, end:100}},
+  brainheart:{N:{ins:'다온손해보험', name:'뇌·심장 진단비 · 비갱신 20년납', base:20000, per:1000, pay:20, end:100},
+              R:{ins:'푸른화재', name:'뇌·심장 진단비 · 10년 갱신', base:7000, per:1000, every:10, rate:1.7, end:100}},
+  dementia:{N:{ins:'새벽생명', name:'치매 진단·간병비 · 비갱신 20년납', base:18000, per:1000, pay:20, end:95},
+            R:{ins:'푸른화재', name:'치매 진단·간병비 · 10년 갱신', base:7000, per:1000, every:10, rate:1.7, end:100}},
+  care:{N:{ins:'한빛생명', name:'간병인 사용일당 · 비갱신 20년납', base:48000, per:10, pay:20, end:100},
+        R:{ins:'누리화재', name:'간병인 사용일당 · 10년 갱신', base:22000, per:10, every:10, rate:1.7, end:100}},
+  pension:{N:{ins:'새벽생명', name:'연금보험 · 10년납 종신 수령', pay:10}},
+  death:{N:{ins:'한빛생명', name:'종신보험 · 20년납', base:210000, per:10000, pay:20, end:101},
+         R:{ins:'다온손해보험', name:'정기보험 · 10년 갱신 80세 만기', base:60000, per:10000, every:10, rate:1.9, end:80}}
+};
+const AMT = {medical:[0], cancer:[1000,2000,3000,5000], brainheart:[1000,2000,3000], dementia:[1000,2000,3000], care:[5,7,10,15], pension:[10,20,30,50], death:[5000,10000,20000]};
+const PRESET = {
+  A:{name:'지금 부담 적게', desc:'처음엔 가장 싸지만, 10년마다 보험료가 올라서 나이 들수록 비싸져요.', color:'var(--A)', hex:'#e08a2e',
+     cfg:{medical:['R',0], cancer:['R',3000], brainheart:['R',2000], dementia:['R',2000], care:['R',10], pension:['N',10], death:['R',5000]}},
+  B:{name:'균형형', desc:'큰 병 보장은 보험료가 안 오르게, 간병비만 오르는 방식으로 섞었어요.', color:'var(--B)', hex:'#3d6fa8',
+     cfg:{medical:['R',0], cancer:['N',3000], brainheart:['N',2000], dementia:['N',2000], care:['R',10], pension:['N',20], death:['N',5000]}},
+  C:{name:'끝까지 고정', desc:'처음엔 비싸지만 보험료가 끝까지 안 오르고, 20년만 내면 그 뒤로는 안 내요.', color:'var(--C)', hex:'#2f8f5b',
+     cfg:{medical:['R',0], cancer:['N',5000], brainheart:['N',3000], dementia:['N',3000], care:['N',10], pension:['N',30], death:['N',10000]}},
+  D:{name:'내가 조정한 조합', desc:'직접 넣고 뺀 조합이에요.', color:'var(--D)', hex:'#8a4fd0'}
+};
+const EXIST = [
+  {id:'e1', cat:'medical', name:'실손의료보험 (2013년 가입)', ins:'누리화재', end:100, prem:68000, pays:'쓴 병원비를 돌려받아요 (자기부담금 제외)', note:'갱신형 · 지금 월 6.8만원'},
+  {id:'e2', cat:'cancer', name:'암 진단비 2,000만원', ins:'한빛생명', end:80, pays:'2,000만원을 한 번에 받아요', note:'납입 완료 · 80세 만기'},
+  {id:'e3', cat:'death', name:'종신보험 1억원', ins:'새벽생명', end:101, pays:'가족이 1억원을 받아요', note:'납입 완료 · 평생 보장'}
+];
+
+/* ---------------- 여행 데이터 (예시) ---------------- */
+const DEST = {
+  jp:{label:'일본', f:0.9, med:3000}, asia:{label:'중국·동남아', f:1.0, med:3000},
+  eu:{label:'유럽', f:1.2, med:5000}, us:{label:'미국·캐나다', f:1.6, med:10000}, oc:{label:'호주·기타', f:1.1, med:5000}
+};
+const WHO = {solo:'혼자', friends:'친구·연인과', kids:'아이와 함께', parents:'부모님(65세+)과 함께'};
+const STYLE = {tour:'관광·휴양', activity:'액티비티 (스키·다이빙 등)', backpack:'배낭여행', biz:'출장'};
+const TCOV = [
+  {k:'med', label:'해외 의료비 (상해·질병)'}, {k:'delay', label:'항공기 지연·결항'}, {k:'bag', label:'휴대품 손해 (분실·도난)'},
+  {k:'rescue', label:'구조송환비'}, {k:'death', label:'상해 사망·후유장해'}, {k:'liab', label:'배상책임'}
+];
+const PLANS = [
+  {id:'p1', ins:'누리화재', name:'해외여행보험 실속형', daily:1100, c:{med:3000, death:10000, liab:500, bag:20, delay:0, rescue:3000}, perk:'가장 저렴한 기본 플랜'},
+  {id:'p2', ins:'다온손해보험', name:'해외여행보험 표준형', daily:1700, c:{med:5000, death:10000, liab:1000, bag:50, delay:10, rescue:5000}, perk:'국제선 2시간 이상 지연 시 정액 보상'},
+  {id:'p3', ins:'푸른화재', name:'해외여행보험 든든형', daily:2600, c:{med:10000, death:20000, liab:2000, bag:100, delay:20, rescue:10000}, perk:'무사고 귀국 시 보험료 10% 환급'}
+];
+
+/* ---------------- 유틸 ---------------- */
+const $ = s => document.querySelector(s);
+const range = (a,b) => { const r=[]; for(let i=a;i<=b;i++) r.push(i); return r; };
+const man = n => { const m=n/10000; if (Math.abs(m)>=10000) return (Math.round(m/1000)/10).toLocaleString()+'억원'; if (Math.abs(m)>=100) return Math.round(m).toLocaleString()+'만원'; return (Math.round(m*10)/10).toLocaleString()+'만원'; };
+const manU = v => v>=10000 ? (v/10000).toLocaleString()+'억원' : v.toLocaleString()+'만원';
+const mPay = v => v<1 ? '0원 (납입 끝)' : '월 '+man(v);
+const rnd = v => { const m=v/10000; return Math.abs(m)>=100 ? Math.round(m)*10000 : Math.round(m*10)*1000; }; // 화면에 보이는 단위로 반올림
+const won = n => (Math.round(n/10)*10).toLocaleString()+'원';
+const amtLabel = (cat,v) => ({medical:'표준형', care:`하루 ${v}만원`, pension:`월 ${v}만원 납입`}[cat] || manU(v));
+function toast(msg){ const d=document.createElement('div'); d.className='toast'; d.textContent=msg; document.body.appendChild(d); setTimeout(()=>d.remove(),2200); }
+const ICON = {
+  plane:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f6b4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>',
+  shield:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f6b4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>',
+  family:'<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#2f6b4f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.1a4 4 0 0 1 0 7.8"/><path d="M21 21v-2a4 4 0 0 0-3-3.9"/></svg>'
+};
+
+/* ---------------- 노후 계산 ---------------- */
+const ageF = a0 => Math.pow(1.04, a0-55);
+function premAt(it, a){
+  const r=S.r, a0=r.age, p=PROD[it.cat][it.type]; if (a<a0) return 0;
+  const H=HEALTH[r.health];
+  const g=(r.gender==='M' && ['cancer','brainheart','death'].includes(it.cat))?1.08:1;
+  if (it.cat==='pension') return a<a0+p.pay ? it.amt*10000 : 0;
+  if (it.cat==='medical') return a>=p.end ? 0 : p.base*ageF(a0)*H.med*Math.pow(p.annual, a-a0);
+  const base=p.base*(it.amt/p.per)*ageF(a0)*H.m*g;
+  if (it.type==='N') return a<a0+p.pay ? base : 0;
+  if (a>=p.end) return 0;
+  return base*Math.pow(p.rate, Math.floor((a-a0)/p.every));
+}
+const pensionRecv = amt => Math.round(amt*120*1.2/300*10)/10; // 만원/월, 종신 수령 가정
+function cover(it){
+  const a0=S.r.age;
+  if (it.cat==='pension'){ const s=Math.max(65,a0+10); return [s, 101]; }
+  return [a0, PROD[it.cat][it.type].end];
+}
+function benefit(it){
+  const v=it.amt;
+  return {medical:'병원비 실손 보상 (자기부담금 제외)', cancer:`암 진단 시 ${manU(v)}`, brainheart:`뇌졸중·심근경색 진단 시 ${manU(v)}`,
+    dementia:`중증 치매 진단 시 ${manU(v)} + 간병 생활비`, care:`간병인 쓰면 하루 ${v}만원`, pension:`매달 약 ${pensionRecv(v)}만원 수령`,
+    death:`사망 시 가족에게 ${manU(v)}`}[it.cat];
+}
+const mon = (items,a) => items.filter(it=>it.cat!=='pension').reduce((s,it)=>s+premAt(it,a),0);
+function analyze(){
+  const r=S.r, ex=EXIST.filter(e=>r.existing.includes(e.id));
+  return CATS.map(cat=>{
+    const e=ex.filter(x=>x.cat===cat).sort((a,b)=>b.end-a.end)[0];
+    const concern=r.concerns.includes(cat);
+    let status=null, text='';
+    if (e && cat==='medical'){ status='dup'; text='이미 있어요. 실손은 하나만 있으면 돼서 더 들 필요가 없어요.'; }
+    else if (e && e.end>=r.target){ status='ok'; text=`이미 ${r.target}세까지 보장돼요 (${e.ins})`; }
+    else if (e){ status='gap'; text=`${e.end}세에 끝나요. ${r.target}세까지 ${r.target-e.end}년이 비어요.`; }
+    else if (concern){ status='none'; text='걱정하신 항목인데 아직 준비된 보장이 없어요.'; }
+    return {cat, e, concern, status, text, need: status==='gap' || (status==='none' && concern)};
+  }).filter(x=>x.status);
+}
+function metrics(items){
+  const r=S.r, a0=r.age, T=r.target;
+  const series=range(a0,T).map(a=>mon(items,a));
+  let total=0; for (let a=a0;a<T;a++) total+=12*mon(items,a);
+  const warn=items.filter(it=>it.cat!=='pension' && cover(it)[1]<T).map(it=>`${CAT[it.cat].label}이(가) ${cover(it)[1]}세에 끝나요`);
+  const pen=items.find(it=>it.cat==='pension');
+  return {now:series[0], series, total, peak:Math.max(...series), warn, pension: pen?pensionRecv(pen.amt):0, penPay: pen?pen.amt:0, penStart: pen?cover(pen)[0]:0};
+}
+function getCombos(needs){
+  const out={};
+  ['A','B','C'].forEach(k=>{
+    const items=needs.map(cat=>({cat, type:PRESET[k].cfg[cat][0], amt:PRESET[k].cfg[cat][1]}));
+    out[k]={key:k, ...PRESET[k], items, m:metrics(items)};
+  });
+  if (S.custom) out.D={key:'D', ...PRESET.D, items:S.custom, m:metrics(S.custom)};
+  return out;
+}
+function recommend(combos){
+  const inB=['A','B','C'].filter(k=>combos[k].m.now<=S.r.budget*10000);
+  if (!inB.length) return {key:'A', over:true};
+  return {key:inB.sort((a,b)=>combos[a].m.total-combos[b].m.total)[0], over:false};
+}
+
+/* ---------------- 차트 ---------------- */
+function niceMax(v){ const m=v/10000; const st=[5,10,20,30,40,50,70,100,150,200,300,500,800,1000]; return (st.find(s=>s>=m*1.08)||Math.ceil(m/100)*100)*10000; }
+function lineChart(series, x0, x1, marks){
+  const W=760,H=310,L=66,R=18,T=22,B=44;
+  const yMax=niceMax(Math.max(1,...series.flatMap(s=>s.values)));
+  const X=a=>L+(a-x0)/(x1-x0||1)*(W-L-R), Y=v=>T+(1-v/yMax)*(H-T-B);
+  let g='';
+  const nT=(yMax/10000)%4===0?4:5;
+  for (let i=0;i<=nT;i++){ const v=yMax*i/nT; g+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="#efece5"/><text x="${L-8}" y="${Y(v)+4}" text-anchor="end" font-size="15" fill="#5b6577">${Math.round(v/10000)}만</text>`; }
+  for (let a=x0;a<=x1;a++) if (a%5===0) g+=`<text x="${X(a)}" y="${H-B+24}" text-anchor="middle" font-size="15" fill="#5b6577">${a}세</text><line x1="${X(a)}" x2="${X(a)}" y1="${H-B}" y2="${H-B+5}" stroke="#c9d4e3"/>`;
+  (marks||[]).forEach(m=>{ g+=`<line x1="${X(m.x)}" x2="${X(m.x)}" y1="${T}" y2="${H-B}" stroke="${m.color||'#2f6b4f'}" stroke-dasharray="4 4"/><text x="${X(m.x)+5}" y="${T+14}" font-size="15" fill="${m.color||'#2f6b4f'}" font-weight="700">${m.label}</text>`; });
+  series.forEach(s=>{
+    const pts=s.values.map((v,i)=>`${X(x0+i)},${Y(v)}`);
+    // 계단형 (해마다 고정 → 갱신 시 점프)
+    let d=''; s.values.forEach((v,i)=>{ const x=X(x0+i), y=Y(v); if(i===0) d+=`M${x},${y}`; else { d+=`L${x},${Y(s.values[i-1])}L${x},${y}`; } });
+    g+=`<path d="${d}" fill="none" stroke="${s.hex}" stroke-width="${s.bold?4:2}" opacity="${s.bold?1:.55}" stroke-linejoin="round"/>`;
+    const last=s.values.length-1; g+=`<circle cx="${X(x0+last)}" cy="${Y(s.values[last])}" r="${s.bold?5:3.5}" fill="${s.hex}"/>`;
+  });
+  g+=`<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" stroke="#c9d4e3"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img">${g}</svg>`;
+}
+function gantt(rows, x0, x1, target, scrub){
+  const W=860,L=290,R=18,T=30,RH=40,H=T+rows.length*RH+22;
+  const X=a=>L+(Math.min(Math.max(a,x0),x1)-x0)/(x1-x0)*(W-L-R);
+  let g='';
+  for (let a=x0;a<=x1;a++) if (a%5===0) g+=`<line x1="${X(a)}" x2="${X(a)}" y1="${T-6}" y2="${H-10}" stroke="#f0f2f6"/><text x="${X(a)}" y="${T-12}" text-anchor="middle" font-size="15" fill="#5b6577">${a}</text>`;
+  rows.forEach((r,i)=>{
+    const y=T+i*RH;
+    g+=`<text x="${L-10}" y="${y+25}" text-anchor="end" font-size="15" fill="${r.ex?'#5b6577':'#1d2433'}" font-weight="${r.ex?400:600}">${r.label}</text>`;
+    if (r.to>r.from){
+      g+=`<rect x="${X(r.from)}" y="${y+8}" width="${Math.max(4,X(r.to)-X(r.from))}" height="24" rx="6" fill="${r.color}"/>`;
+      if (r.endLabel) g+=`<text x="${X(r.to)-6}" y="${y+25}" text-anchor="end" font-size="13" fill="#fff" font-weight="700">${r.endLabel}</text>`;
+    }
+    if (r.gap){
+      g+=`<rect x="${X(r.gap[0])}" y="${y+8}" width="${Math.max(4,X(r.gap[1])-X(r.gap[0]))}" height="24" rx="6" fill="url(#hatch)" stroke="#d64545" stroke-width="1.2"/>`;
+      g+=`<text x="${(X(r.gap[0])+X(r.gap[1]))/2}" y="${y+25}" text-anchor="middle" font-size="13" fill="#b02a2a" font-weight="800">${r.gapLabel||'공백'}</text>`;
+    }
+  });
+  g+=`<line x1="${X(target)}" x2="${X(target)}" y1="${T-4}" y2="${H-8}" stroke="#2f6b4f" stroke-width="1.5" stroke-dasharray="5 4"/><text x="${X(target)+4}" y="${H-3}" font-size="14" fill="#2f6b4f" font-weight="700">목표 ${target}세</text>`;
+  if (scrub!=null) g+=`<line x1="${X(scrub)}" x2="${X(scrub)}" y1="${T-4}" y2="${H-8}" stroke="#e0a800" stroke-width="3" opacity=".85"/>`;
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img"><defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#fde2e2"/><line x1="0" y1="0" x2="0" y2="7" stroke="#f0a0a0" stroke-width="3"/></pattern></defs>${g}</svg>`;
+}
+
+/* ---------------- 화면: 홈 ---------------- */
+function vHome(){
+  const rows=[
+    ['go','retire-form','내 보험 보장을 확인하고 싶어요','어떤 일이 생기면 얼마를, 몇 살까지 받는지 보여드려요.'],
+    ['goParent','','부모님 보험을 대신 확인하고 있어요','부모님 인증 한 번으로 보험을 불러와요.']
+  ];
+  return `<div class="home">
+  <h1>예전에 든 보험, <br>지금 어디까지 보장될까요?</h1>
+  <p class="lead">가입한 보험을 불러와서, 아플 때 무엇을 몇 살까지 받을 수 있는지 보여드려요.</p>
+  <div class="pick">${rows.map(([act,v,t,d])=>`<button data-act="${act}"${v?` data-v="${v}"`:''}><span><span class="t">${t}</span><span class="d">${d}</span></span></button>`).join('')}</div>
+  <p class="demo"><button data-act="demoResult">예시 결과 먼저 보기</button></p>
+  <p class="prolink">설계사이신가요? <button data-act="go" data-v="pro">상담 도구 보기</button></p>
+  </div>`;
+}
+
+/* ---------------- 화면: 설계사용 안내 ---------------- */
+function vPro(){
+  return `<div class="home">
+  <h1>설계사용 상담 도구</h1>
+  <p class="lead" style="margin-bottom:1rem">고객이 가진 보험의 보장 범위와 오르는 보험료를 상담 자리에서 바로 보여줄 수 있어요.</p>
+  <div class="tiers">
+    <div class="tier"><h3>개인 설계사</h3><b class="price">월 20,000원</b><p>계약 건수와 관계없이 같은 요금이에요.</p>
+      <ul><li>고객 보험 불러오기와 상황별 보장 확인</li><li>만기·갱신 보험료 정리와 상담 요약</li><li>부족한 곳을 채우는 조합 비교</li></ul>
+      <button class="btn" data-act="pro">2주 무료로 써 보기</button></div>
+    <div class="tier"><h3>보험대리점 단체</h3><b class="price">단체 요금 문의</b><p>소속 설계사 수만큼 한 번에, 1년 계약이에요.</p>
+      <ul><li>개인 요금제 기능 전부</li><li>상담 요약지에 대리점 로고</li><li>팀별 사용 현황과 고객 동의 관리</li></ul>
+      <button class="btn ghost" data-act="proGA">단체 문의하기</button></div>
+  </div>
+  <div class="row" style="margin-top:1rem"><button class="btn ghost" data-act="go" data-v="pro-demo">상담 도구 미리 보기</button><button class="btn ghost" data-act="home">뒤로</button></div>
+  
+  </div>`;
+}
+
+// 운영 목표: 비밀번호로 암호화한 본문 (PBKDF2-SHA256 20만 회 + AES-256-GCM, 원문은 donworry-goals.src.html)
+const GOALS_ENC=null; // 운영 목표 본문은 공개 저장소에서 뺐다
+async function openGoals(pw){
+  const b=x=>Uint8Array.from(atob(x),c=>c.charCodeAt(0));
+  const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
+  const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b(GOALS_ENC.s),iterations:200000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+  return new TextDecoder().decode(await crypto.subtle.decrypt({name:'AES-GCM',iv:b(GOALS_ENC.i)},key,b(GOALS_ENC.c)));
+}
+function vGoals(){
+  if (S.goals) return `<div class="home goals"><h1>운영 목표</h1>${S.goals}<div class="row" style="margin-top:1.5rem"><button class="btn ghost" data-act="go" data-v="pro">뒤로</button></div></div>`;
+  return `<div class="home"><h1>운영 목표</h1><p class="lead">비밀번호를 넣어야 볼 수 있어요.</p>
+  <form class="pw" id="goalsForm"><input type="password" id="gpw" autocomplete="off" aria-label="비밀번호"><button class="btn" type="submit">열기</button></form>
+  <p class="err" id="gerr" role="alert"></p>
+  <button class="btn ghost" data-act="go" data-v="pro">뒤로</button></div>`;
+}
+document.addEventListener('submit',async e=>{
+  if (e.target.id!=='goalsForm') return; e.preventDefault();
+  try { S.goals=await openGoals($('#gpw').value); render(); }
+  catch { $('#gerr').textContent='비밀번호가 맞지 않아요.'; $('#gpw').select(); }
+});
+
+const CLIENTS=[
+  {name:'김○○', memo:'58세 남성, 혈압약 복용, 암보험이 80세에 끝남', r:{age:58,gender:'M',health:'meds',target:90,budget:30,concerns:['medical','cancer','dementia','care'],existing:['e1','e2']}},
+  {name:'이○○', memo:'63세 여성, 최근 수술, 치매·간병이 걱정', r:{age:63,gender:'F',health:'hosp',target:90,budget:20,concerns:['medical','dementia','care'],existing:['e1']}},
+  {name:'박○○', memo:'52세 남성, 건강함, 노후 생활비 준비', r:{age:52,gender:'M',health:'healthy',target:100,budget:50,concerns:['cancer','brainheart','pension','death'],existing:['e3']}}
+];
+function vProDemo(){
+  return `<div class="home"><h1>내 고객</h1><p class="lead">고객을 누르면 그 고객의 점검 결과가 상담 화면으로 열려요.</p>
+  <div class="pick">${CLIENTS.map((c,i)=>`<button data-act="openClient" data-v="${i}"><span><span class="t">${c.name} 고객</span><span class="d">${c.memo}</span></span></button>`).join('')}</div>
+  <p class="sub" style="margin-top:1rem">예시 고객이에요. 실제 서비스에서는 고객 동의를 받고 상황을 저장해요.</p>
+  <div class="row" style="margin-top:1rem"><button class="btn ghost" data-act="go" data-v="pro">뒤로</button></div></div>`;
+}
+
+/* ---------------- 화면: 노후 입력 ---------------- */
+function vRetireForm(){
+  const r=S.r, par=S.forParent, st=S.step||0, N=4;
+  const seg=(k,opts)=>`<div class="seg">${opts.map(([v,l])=>`<button class="${String(r[k])===String(v)?'on':''}" data-act="setR" data-k="${k}" data-v="${v}">${l}</button>`).join('')}</div>`;
+  const ex = r.loading ? `<div class="exist"><span class="loading"></span>${par?'부모님 인증을 기다리는 중이에요...':'가입한 보험을 불러오는 중이에요...'}</div>`
+    : r.imported ? `<div class="exist"><div class="sub" style="margin-bottom:.4rem">3건을 찾았어요. 지금 유지 중인 보험만 체크해 주세요.</div>${EXIST.map(e=>`
+        <label class="exitem"><input type="checkbox" data-ex="${e.id}" ${r.existing.includes(e.id)?'checked':''}><div><b>${e.name}</b> <span class="muted small">${e.ins}</span><div class="small sub">${e.note}</div></div></label>`).join('')}</div>`
+    : `<div class="imp"><button class="btn" data-act="import">${par?'부모님께 인증 요청 보내기':'내 보험 불러오기'}</button><p>${par?'부모님 휴대폰으로 인증 요청이 가요.':'본인인증 한 번이면 돼요.'} (데모: 예시 3건)</p></div>`;
+  const Q=[
+    [par?'부모님이 가입한 보험부터 불러올게요':'가입한 보험부터 불러올게요', ex],
+    [par?'부모님 나이와 성별을 알려주세요':'나이와 성별을 알려주세요', `<div class="stepper"><button data-act="age" data-v="-1" aria-label="한 살 줄이기">−</button><div class="bignum"><span id="ageV">${r.age}</span>세</div><button data-act="age" data-v="1" aria-label="한 살 늘리기">+</button></div><div style="margin-top:1.25rem">${seg('gender',[['M','남성'],['F','여성']])}</div>`],
+    ['몇 살까지 보장되면 좋겠어요?', `${seg('target',[[80,'80세'],[90,'90세'],[100,'100세']])}<p class="sub" style="margin:.8rem 0 0">잘 모르겠으면 90세를 고르세요.</p>`],
+    ['특히 걱정되는 일을 골라 주세요', `<div class="chips">${CATS.map(c=>`<button class="chip ${r.concerns.includes(c)?'on':''}" data-act="concern" data-v="${c}">${CAT[c].concern}</button>`).join('')}</div>`]
+  ];
+  const last=st===N-1, none=last&&!r.concerns.length;
+  const next = st===0 && !r.imported
+    ? `<button class="btn ghost" data-act="step" data-v="1">${r.loading?'기다리는 중...':'나중에 할게요'}</button>`
+    : last ? `<button class="btn" data-act="go" data-v="retire-result" ${none?'disabled':''}>내 보장 확인하기</button>`
+    : `<button class="btn" data-act="step" data-v="1">다음</button>`;
+  const back = st===0 ? `<button class="btn ghost" data-act="home">처음으로</button>` : `<button class="btn ghost" data-act="step" data-v="-1">이전</button>`;
+  return `<div class="rf wiz"><div class="steps">${st+1} / ${N}</div><h2 class="title">${Q[st][0]}</h2>
+  <div class="card">${Q[st][1]}</div>
+  ${none?'<p class="sub" style="margin:-.5rem 0 1rem">하나 이상 골라 주세요.</p>':''}
+  <div class="row">${next}${back}</div></div>`;
+}
+
+/* ---------------- 화면: 노후 결과 ---------------- */
+function vRetireResult(){
+  const r=S.r, an=analyze(), needs=an.filter(x=>x.need).map(x=>x.cat);
+  const H=HEALTH[r.health];
+  const head=`<div class="rr"><div class="row" style="justify-content:space-between;margin-bottom:1rem">
+    <div class="summary">${S.forParent?'부모님, ':''}${r.age}세 ${r.gender==='M'?'남성':'여성'}, ${r.target}세까지 확인${S.pro?`, ${{healthy:'건강함',meds:'약 복용 중',hosp:'최근 입원·수술'}[r.health]}, 월 ${r.budget}만원 이내`:''}</div>
+    <button class="btn ghost sm noprint" data-act="go" data-v="retire-form">조건 바꾸기</button></div>`
+    +(S.pro?`<div class="probar"><div><b>${S.pro} 고객 상담 중</b><div class="sub">설계사 화면이에요. 고객과 같이 보면서 조합을 바꿔 보세요.</div></div><button class="btn ghost sm" data-act="go" data-v="pro-demo">고객 목록</button></div>`:'');
+  const nudge = r.imported ? '' : `<div class="nudge">${r.loading?`<span><span class="loading"></span>${S.forParent?'부모님 인증을 기다리는 중이에요...':'가입한 보험을 불러오는 중이에요...'}</span>`:`<span>가입한 보험을 불러와야 보장을 확인할 수 있어요.</span><button class="btn sm" data-act="import">${S.forParent?'부모님께 인증 요청 보내기':'내 보험 불러오기'}</button>`}</div>`;
+  const needCard=`<div class="card"><h2>지금 내 보험, 괜찮은가요?</h2><div class="sub" style="margin-bottom:.9rem">걱정거리와 이미 가입한 보험을 비교해서, 새로 준비할 것만 골랐어요.</div>
+    <div class="needs">${an.map(x=>`<div class="need"><div class="nh"><b>${CAT[x.cat].label}</b><span class="tag t-${x.status}">${{ok:'준비됨',gap:'공백 있음',none:'없음',dup:'이미 있음'}[x.status]}</span></div><div class="sub">${x.text}</div></div>`).join('')}</div></div>`;
+  const exPrem=EXIST.filter(e=>r.existing.includes(e.id)).reduce((t,e)=>t+(e.prem||0),0); // ponytail: 기존 보험료는 지금 금액 기준
+  const combos=needs.length?getCombos(needs):null, rec=combos?recommend(combos):null, rc=combos?combos[rec.key]:null;
+  const PLAIN={medical:'병원비',cancer:'암',brainheart:'뇌졸중·심장병',dementia:'치매',care:'간병비',pension:'노후 생활비(연금)',death:'가족에게 남길 돈'};
+  const okL=an.filter(x=>x.status==='ok'||x.status==='dup').map(x=>PLAIN[x.cat]);
+  const gapL=an.filter(x=>x.status==='gap').map(x=>`${PLAIN[x.cat]} (${x.e.end}세에 끝나서 ${r.target}세까지 ${r.target-x.e.end}년이 비어요)`);
+  const noneL=an.filter(x=>x.status==='none').map(x=>PLAIN[x.cat]);
+  const easyP = !S.pro ? (r.imported&&exPrem?`지금 내는 보험료는 매달 <b>${man(exPrem)}</b>이에요.`:'')
+    : rc ? (rec.over?`예산 안에서 채우는 방법은 없어서, 가장 싼 방법(${rc.name})이면 <b>매달 약 ${man(rc.m.now)}</b>을 더 내야 해요.`:`가장 적게 내는 방법(${rec.key}. ${rc.name}) 기준으로, 매달 약 <b>${man(rc.m.now)}</b>을 더 내면 비어 있는 곳이 채워져요.`) : '';
+  const easy=`<div class="card easy"><h2>한눈에 보면</h2>${nudge}<ul>
+    ${okL.length?`<li><b>준비돼 있어요</b><span>${okL.join(', ')}</span></li>`:''}
+    ${gapL.length?`<li><b class="warn">곧 끝나요</b><span>${gapL.join(', ')}</span></li>`:''}
+    ${noneL.length?`<li><b class="warn">아직 없어요</b><span>${noneL.join(', ')}</span></li>`:''}</ul>
+    ${easyP?`<p>${easyP}</p>`:''}
+    <details class="gloss"><summary>보험 용어가 어렵다면</summary><dl>
+      <dt>비갱신형</dt><dd>보험료가 끝까지 똑같아요. 정해진 기간(예: 20년)만 내면 그 뒤로는 안 내요.</dd>
+      <dt>갱신형</dt><dd>처음엔 싸지만 10년마다 보험료가 다시 정해져서, 나이 들수록 비싸져요.</dd>
+      <dt>실손</dt><dd>병원비를 실제로 쓴 만큼 돌려받는 보험이에요.</dd>
+      <dt>진단비</dt><dd>암 같은 병을 진단받으면 정해진 돈을 한 번에 받아요.</dd>
+      <dt>간편심사</dt><dd>약을 먹거나 병력이 있어도 가입할 수 있게 심사를 줄인 방식이에요. 보험료는 조금 비싸요.</dd>
+      <dt>납입·적립</dt><dd>납입은 보험료를 내는 것, 적립은 연금처럼 나중에 받으려고 모으는 돈이에요.</dd>
+    </dl></details></div>`;
+  const nextCard=`<div class="card"><h2>다음에 할 일</h2><ol class="next">
+    <li><b>가족과 같이 보기</b><span>보장 안 되는 일을 가족과 미리 나눠 두세요.</span></li>
+    <li><b>일이 생기면 바로 청구하기</b><span>병원비는 영수증과 진료비 세부내역서로 보험사에 청구해요.</span></li>
+    <li><b>실비처럼 다시 들기 어려운 보험은 해지하지 마세요</b><span>나이가 들면 새로 가입하기 어렵고 보험료도 비싸져요.</span></li></ol>
+    <div class="row noprint" style="margin-top:1rem"><button class="btn" data-act="share">가족에게 공유하기</button><button class="btn ghost" data-act="print">상담용 요약 저장</button></div></div>`;
+  const checked=r.imported?coverHTML()+renewHTML():'';
+  if (!needs.length && !S.pro) return head+easy+checked+nextCard+'</div>';
+  if (!needs.length) return head+easy+checked+needCard+`<div class="card"><b>새로 준비할 보장이 없어요.</b><div class="sub">걱정되는 항목을 더 고르거나 목표 나이를 바꿔보세요.</div></div></div>`;
+  if (!S.sel || !combos[S.sel]) S.sel=rec.key;
+  const keys=Object.keys(combos), sel=combos[S.sel];
+  const T=r.target, a0=r.age;
+
+  // 인사이트
+  const A=combos.A.m, Bm=combos.B.m;
+  let insight;
+  if (A.total>Bm.total){
+    const ci=A.series.findIndex((v,i)=>v>Bm.series[i]);
+    insight=`A와 B는 보장이 똑같아요. A는 지금 월 ${man(rnd(Bm.now)-rnd(A.now))} 싸지만${ci>=0?`, ${a0+ci}세부터는 B보다 보험료가 비싸져요`:''}. ${T}세까지 낸 돈을 다 더하면 A가 ${man(rnd(A.total)-rnd(Bm.total))} 더 내요.`;
+  } else insight=`${T}세까지만 보면 갱신형(A)이 총 ${man(rnd(Bm.total)-rnd(A.total))} 덜 내요. 대신 ${T}세 이후에도 보험료가 계속 올라요 (${T}세 월 ${man(A.series[A.series.length-1])}).`;
+
+  const comboCards=`<div class="${keys.length>3?'grid4':'grid3'}">${keys.map(k=>{const c=combos[k], over=c.m.now>r.budget*10000; return `
+    <button class="combo ${S.sel===k?'on':''}" data-act="pick" data-v="${k}">
+      ${S.pro?`<div class="bar" style="background:${c.color}"></div>`:''}
+      <div class="nm">${k!=='D'?k+'. ':''}${c.name}</div>${k===rec.key&&!rec.over?'<div class="rec">예산 안에서 총 보험료가 가장 적어요</div>':''}<div class="sub">${c.desc}</div>
+      ${S.pro?`
+      <div class="pr">월 ${man(c.m.now)}</div><div class="sub">새로 더 내는 보험료</div>${exPrem?`<div class="sub">기존 보험 포함 월 ${man(c.m.now+exPrem)}</div>`:''}<div style="margin-bottom:.5rem"></div>${over?'<div class="over">예산을 넘어요</div>':''}
+      <div class="kv"><span>75세에는</span><b>${a0<=75&&75<=T?mPay(c.m.series[75-a0]):'-'}</b></div>
+      ${S.pro?`<div class="kv"><span>가장 비쌀 때</span><b>월 ${man(c.m.peak)}</b></div>`:''}
+      <div class="kv"><span>${T}세까지 모두 내면</span><b>${man(c.m.total)}</b></div>
+      ${c.m.pension&&!S.pro?`<div class="kv"><span>${c.m.penStart}세부터 연금</span><b>월 ${c.m.pension}만원</b></div>`:''}${c.m.pension&&S.pro?`<div class="kv"><span>연금 적립</span><b>월 ${c.m.penPay}만원 × 10년</b></div><div class="kv"><span>연금 수령</span><b>${c.m.penStart}세부터 월 ${c.m.pension}만원</b></div>`:''}
+      ${c.m.warn.length?`<div class="small" style="color:var(--red);margin-top:.4rem">${c.m.warn.join(', ')}</div>`:''}
+      `:`<div class="pr">월 ${man(c.m.now)}</div><div class="sub" style="margin-bottom:.5rem">지금 새로 더 내는 돈</div>${over?'<div class="over">예산을 넘어요</div>':''}<div class="kv"><span>75세에는</span><b>${a0<=75&&75<=T?mPay(c.m.series[75-a0]):'-'}</b></div>`}
+    </button>`;}).join('')}</div>
+    ${rec.over?'<div class="small" style="color:var(--red);margin-top:.6rem">예산 안에 들어오는 조합이 없어서 가장 저렴한 조합을 보여드렸어요. 걱정 항목을 줄이거나 예산을 올려보세요.</div>':''}`;
+
+  const legend=`<div class="legend">${keys.map(k=>`<span><i style="background:${PRESET[k].hex}"></i>${k!=='D'?k+'. ':''}${PRESET[k].name}</span>`).join('')}</div>`;
+
+  const ages=[...new Set([a0,65,75,85,T])].filter(a=>a>=a0&&a<=T).sort((x,y)=>x-y);
+  const short=v=>v<1?'0':String(Math.round(v/1000)/10); // 만원 단위 숫자만
+  const simpleBody=`
+  <div class="card"><h2>비어 있는 곳, 어떻게 채울까요?</h2><div class="sub" style="margin-bottom:1.1rem">지금 보험은 그대로 두고, 새로 더할 것만 비교했어요.</div>${comboCards}</div>
+  <div class="card"><h2>나이 들면 보험료는 얼마나 되나요?</h2><p class="insight">${insight}</p>
+    <table class="agetbl"><tr><th>나이</th>${keys.map(k=>`<th class="${k===S.sel?'on':''}">${{A:'부담 적게',B:'균형',C:'고정',D:'내 조합'}[k]}</th>`).join('')}</tr>
+    ${ages.map(a=>`<tr><th>${a}세</th>${keys.map(k=>`<td class="${k===S.sel?'on':''}">${short(combos[k].m.series[a-a0])}</td>`).join('')}</tr>`).join('')}</table>
+    <div class="sub" style="margin-top:.6rem">매달 새로 더 내는 돈이고, 단위는 만원이에요.</div></div>
+  <div class="card"><h2>새로 더하는 보험</h2><div class="sub" style="margin-bottom:.4rem">"${sel.name}" 기준이에요. 위에서 다른 방법을 누르면 바뀌어요.</div><ul class="addlist">
+    ${sel.items.filter(it=>it.cat!=='pension').map(it=>`<li><b>${CAT[it.cat].label}</b><em>월 ${man(premAt(it,a0))}</em><span>${benefit(it)}</span></li>`).join('')}
+    <li class="tot"><b>합계</b><em>월 ${man(sel.m.now)}</em></li></ul>
+    ${sel.m.penPay?`<p class="sub" style="margin:.6rem 0 0">연금은 따로 모으는 돈이에요. 월 ${sel.m.penPay}만원씩 10년 모으면 ${sel.m.penStart}세부터 매달 약 ${sel.m.pension}만원을 받아요.</p>`:''}</div>
+`;
+  const fill=`<div class="card"><h2>부족한 곳을 채우고 싶다면</h2><div class="sub">비어 있는 곳을 새 보험으로 채우는 방법을 비교해 볼 수 있어요. 가입은 설계사나 보험사와 상담하세요.</div>
+    <div class="row noprint" style="margin-top:.8rem"><button class="btn ghost" data-act="fill">${S.fillOpen?'접기':'채우는 방법 보기'}</button></div></div>`;
+  if (!S.pro) return head+easy+checked+fill+(S.fillOpen?simpleBody:'')+nextCard+'</div>';
+  return head+easy+checked+needCard+`
+  <div class="card"><h2>비어 있는 곳, 어떻게 채울까요?</h2><div class="sub" style="margin-bottom:1.1rem">지금 보험은 그대로 두고, 새로 더할 보험만 묶어서 비교해요.</div>${comboCards}</div>
+  <div class="card"><h2>나이 들면 얼마를 내고, 무엇을 받나요?</h2>
+    <div class="insight">${insight}</div>
+    <div class="sub">막대를 움직여 나이를 고르면, 그 나이의 보험료와 아래 "${sel.name}" 보장 내용이 함께 바뀌어요.</div>
+    <div class="row" style="margin:.8rem 0 1rem"><input type="range" min="${a0}" max="100" value="${S.snap}" data-range="snap" style="flex:1"><div class="row noprint">${[65,75,85].map(a=>`<button class="btn ghost sm" data-act="snap" data-v="${a}">${a}세</button>`).join('')}</div></div>
+    ${legend}<div id="chartBox">${premChart(combos)}</div>
+    <div class="small muted" style="margin-top:.5rem">새로 더하는 보장성 보험료만 비교했어요 (지금 내는 보험료와 연금 적립금은 제외). 갱신형은 10년마다, 실손은 매년 보험료가 오른다고 가정한 예상치예요. 비갱신형은 20년 납입이 끝나면 0원이에요.</div>
+    <h3 class="selh">"${sel.name}"으로 들면</h3>
+    <div id="snapBox">${snapHTML(sel)}</div>
+    <div class="legend" style="margin:.6rem 0"><span><i style="background:#3d6fa8"></i>비갱신 (보험료 고정)</span><span><i style="background:#e08a2e"></i>갱신형 (보험료 오름)</span><span><i style="background:#2f8f5b"></i>연금 받는 기간</span><span><i style="background:#c3cad5"></i>이미 가입한 보험</span><span><i style="background:#fde2e2;border:1px solid #d64545"></i>보장 공백</span></div>
+    <div id="ganttBox" class="chart scroll">${ganttHTML(sel, an)}</div></div>
+  <div class="card"><h2>새로 더하는 보험</h2><div class="sub" style="margin-bottom:.6rem">특정 보험사 상품이 아니라, 필요한 보장의 종류와 금액, 가입 방식만 정리했어요.</div><div class="scroll"><table class="items"><tr><th>보장</th><th>가입 방식</th><th>보장 내용</th><th>지금 월 보험료</th></tr>
+    ${sel.items.map(it=>`<tr><td><b>${CAT[it.cat].label}</b><div class="tag t-${it.cat==='pension'?'P':it.type}">${it.cat==='pension'?'적립형':it.type==='N'?'비갱신':'갱신'}</div></td><td>${PROD[it.cat][it.type].name.split(' · ').slice(1).join(' · ')||'표준형'}${r.health!=='healthy'&&it.cat!=='pension'?` <span class="muted small">(${H.tag})</span>`:''}</td><td>${benefit(it)}</td><td><b>${won(premAt(it,a0))}</b>${it.cat==='pension'?'<div class="small muted">적립 (10년)</div>':''}</td></tr>`).join('')}
+    <tr class="tot"><td colspan="3" style="text-align:right"><b>새로 더 내는 보험료 합계</b></td><td><b>${won(sel.m.now)}</b></td></tr>${exPrem?`<tr class="tot"><td colspan="3" style="text-align:right" class="sub">지금 내는 보험까지 합치면</td><td class="sub">${won(sel.m.now+exPrem)}</td></tr>`:''}
+    ${sel.m.penPay?`<tr class="tot"><td colspan="3" style="text-align:right" class="sub">연금 적립 포함 시</td><td class="sub">${won(sel.m.now+sel.m.penPay*10000)}</td></tr>`:''}</table></div></div>
+  <div class="card noprint"><h2>직접 조합해 보기</h2><div class="sub" style="margin-bottom:.8rem">보장을 넣고 빼거나 금액을 바꾸면 위 비교와 그래프에 "내가 조정한 조합"으로 바로 반영돼요.</div><div class="scroll">${adjHTML(sel)}</div></div>
+  <div class="row noprint"><button class="btn" data-act="share">가족에게 공유하기</button><button class="btn ghost" data-act="print">설계사 상담용 요약 저장</button><span class="sub">설계사를 만나기 전에 이 결과를 들고 가면 질문이 쉬워져요.</span></div></div>`;
+}
+const SITU=[['medical','병원에 입원하거나 수술하면'],['cancer','암 진단을 받으면'],['brainheart','뇌졸중이나 심장병 진단을 받으면'],['dementia','치매 진단을 받으면'],['care','간병인이 필요해지면'],['death','세상을 떠나면 가족에게']];
+function coverHTML(){
+  const r=S.r, T=r.target, ex=EXIST.filter(e=>r.existing.includes(e.id));
+  const rows=[...SITU].sort((a,b)=>r.concerns.includes(b[0])-r.concerns.includes(a[0])).map(([cat,q])=>{
+    const e=ex.filter(x=>x.cat===cat).sort((a,b)=>b.end-a.end)[0];
+    const [st,cls,txt] = !e ? ['못 받아요','no','준비된 보험이 없어요.']
+      : e.end>=T ? ['받아요','ok',`${e.pays}. ${e.end>100?'평생':e.end+'세까지'} 보장돼요. (${e.ins})`]
+      : [`${e.end}세까지만`,'part',`${e.pays}. ${e.end}세가 지나면 못 받아요. (${e.ins})`];
+    return `<li><div class="ch"><b>${q}</b><span class="st ${cls}">${st}</span></div><span>${txt}</span></li>`;
+  }).join('');
+  return `<div class="card"><h2>이런 일이 생기면 받을 수 있나요?</h2><div class="sub" style="margin-bottom:.4rem">${T}세까지를 기준으로 확인했어요.</div><ul class="cover">${rows}</ul></div>`;
+}
+function renewHTML(){
+  const r=S.r, a0=r.age, ex=EXIST.filter(e=>r.existing.includes(e.id));
+  const ren=ex.filter(e=>e.prem), done=ex.filter(e=>!e.prem);
+  const ages=[...new Set([a0,65,75,85])].filter(a=>a>=a0).sort((x,y)=>x-y);
+  const at=(e,a)=>e.prem*Math.pow(1.05,a-a0); // ponytail: 매년 5% 인상 가정, 실제 갱신률 데이터가 생기면 교체
+  const nm=e=>e.name.replace(/ \(.*\)$/,'');
+  return `<div class="card"><h2>지금 보험료, 계속 낼 수 있나요?</h2>
+  ${ren.length?`<table class="agetbl"><tr><th>나이</th>${ren.map(e=>`<th>${nm(e)}</th>`).join('')}</tr>${ages.map(a=>`<tr><th>${a===a0?'지금':a+'세'}</th>${ren.map(e=>`<td>월 ${man(at(e,a))}</td>`).join('')}</tr>`).join('')}</table>
+  <div class="sub" style="margin-top:.6rem">갱신될 때마다 보험료가 올라요. 매년 5%씩 오른다고 가정한 예상치예요.</div>`:''}
+  ${done.length?`<p class="sub" style="margin:.8rem 0 0">${done.map(nm).join(', ')}은 납입이 끝나서 더 내지 않아요.</p>`:''}</div>`;
+}
+function premChart(combos){
+  const r=S.r, a0=r.age, T=r.target, keys=Object.keys(combos), sn=S.snap;
+  const marks=[{x:Math.max(a0,65),label:'65세'}].filter(m=>m.x<T && m.x!==sn);
+  if (sn>=a0 && sn<=T) marks.push({x:sn, label:`${sn}세`, color:'#9a6b00'});
+  const chart=lineChart(keys.map(k=>({hex:PRESET[k].hex, values:combos[k].m.series, bold:k===S.sel})), a0, T, marks);
+  const ages=[...new Set([a0,65,75,85,T,sn])].filter(a=>a>=a0&&a<=T).sort((x,y)=>x-y);
+  const mx=Math.max(1,...keys.flatMap(k=>combos[k].m.series));
+  const ageList=`<div class="alist">${ages.map(a=>`<div class="arow${a===sn?' on':''}"><b>${a}세</b>${keys.map(k=>{const v=combos[k].m.series[a-a0]; return `<div class="aval${k===S.sel?' on':''}"><span>${k!=='D'?k:'내 조합'}</span><i><s style="width:${v/mx*100}%;background:${PRESET[k].hex}"></s></i><em>${mPay(v)}</em></div>`;}).join('')}</div>`).join('')}</div>`;
+  return `<div class="chart lchart" style="margin-top:.5rem">${chart}</div>${ageList}`;
+}
+function snapHTML(sel){
+  const a=S.snap, r=S.r;
+  const ex=EXIST.filter(e=>r.existing.includes(e.id));
+  const act=[], ended=[];
+  sel.items.forEach(it=>{ const [f,t]=cover(it); if (a>=f && a<t) act.push(benefit(it)); else if (a>=t) ended.push(`${CAT[it.cat].label} (${t}세에 끝남)`); });
+  ex.forEach(e=>{ if (a<e.end) act.push(`${e.name.replace(/ \(.*\)$/,'')} <span class="muted">(기존)</span>`); else ended.push(`${e.name.replace(/ \(.*\)$/,'')} (기존, ${e.end}세 만기)`); });
+  const pen=sel.items.find(it=>it.cat==='pension'), pa=pen&&a>=cover(pen)[0]&&a<cover(pen)[1]?pensionRecv(pen.amt):0;
+  return `<div class="snap"><div class="stat"><div class="small sub">${a}세에 새로 더 내는 보험료</div><div class="v">${mPay(mon(sel.items,a))}</div></div>
+    <div class="stat"><div class="small sub">${a}세에 받는 보장·연금</div><div class="v">${act.length}개</div></div>
+    <div class="stat"><div class="small sub">${a}세 연금 수령</div><div class="v">${pa?`월 ${pa}만원`:'없음'}</div></div></div>
+    <div class="grid2"><div><b>받을 수 있어요</b><ul class="blist">${act.map(x=>`<li>${x}</li>`).join('')||'<li class="muted">없음</li>'}</ul></div>
+    <div><b style="color:${ended.length?'var(--red)':'inherit'}">끝난 보장</b><ul class="blist end">${ended.map(x=>`<li>${x}</li>`).join('')||'<li class="muted">없음</li>'}</ul></div></div>`;
+}
+function ganttHTML(sel, an){
+  const r=S.r, a0=r.age;
+  const rows=[];
+  EXIST.filter(e=>r.existing.includes(e.id)).forEach(e=>{
+    const covered=sel.items.some(it=>it.cat===e.cat && cover(it)[1]>=r.target);
+    rows.push({label:e.name.replace(/ \(.*\)$/,'')+' (기존)', from:a0, to:Math.min(e.end,100), end:e.end, color:'#c3cad5', ex:true,
+      gap: e.end<r.target?[e.end, r.target]:null, gapLabel: covered?'공백 채움':'공백'});
+  });
+  sel.items.forEach(it=>{ const [f,t]=cover(it);
+    rows.push({label:CAT[it.cat].label+(it.cat==='pension'?' 수령':''), from:f, to:Math.min(t,100), end:t, color:it.cat==='pension'?'#2f8f5b':it.type==='N'?'#3d6fa8':'#e08a2e', endLabel:t<=100?`${t}세`:'' });
+  });
+  return gantt(rows, a0, 100, r.target, S.snap)+ganttList(rows, a0, 100, r.target, S.snap);
+}
+// 모바일용: 이름 아래에 막대를 한 줄씩 (SVG는 820px 이하에서 숨김)
+function ganttList(rows, x0, x1, target, scrub){
+  const P=a=>(Math.min(Math.max(a,x0),x1)-x0)/(x1-x0)*100;
+  const bar=(f,t,cls,bg)=>`<i class="${cls}" style="left:${P(f)}%;width:${Math.max(1.5,P(t)-P(f))}%${bg?`;background:${bg}`:''}"></i>`;
+  return `<div class="glist">${rows.map(r=>`<div class="grow">
+    <div class="glab${r.ex?' ex':''}"><span>${r.label}</span><span class="rng">${r.to>r.from?(r.end>100?`${r.from}세부터 평생`:`${r.from}~${r.end}세`):''}${r.gap?`, ${r.gap[0]}~${r.gap[1]}세 ${r.gapLabel}`:''}</span></div>
+    <div class="gtrack">${r.to>r.from?bar(r.from,r.to,'',r.color):''}${r.gap?bar(r.gap[0],r.gap[1],'gap'):''}<b style="left:${P(target)}%"></b>${scrub!=null?`<b class="scr" style="left:${P(scrub)}%"></b>`:''}</div></div>`).join('')}
+    <div class="gaxis"><span>${x0}세</span><span>${x1}세</span></div>
+    <div class="sub">점선은 목표 ${target}세, 노란 선은 위에서 고른 ${scrub}세예요.</div></div>`;
+}
+function adjHTML(sel){
+  const cur=S.custom||sel.items;
+  return `<table class="adj"><tr><th>넣기</th><th>보장</th><th>방식</th><th>금액</th><th>지금 월 보험료</th></tr>${CATS.map(cat=>{
+    const it=cur.find(x=>x.cat===cat), on=!!it, types=Object.keys(PROD[cat]);
+    const type=it?it.type:(types.includes('N')?'N':types[0]), amt=it?it.amt:AMT[cat][Math.min(1,AMT[cat].length-1)];
+    return `<tr class="${on?'':'off'}"><td><input type="checkbox" data-adj="on" data-cat="${cat}" ${on?'checked':''}></td><td><b>${CAT[cat].label}</b></td>
+      <td>${cat==='pension'?'<span class="muted">적립형</span>':cat==='medical'?'<span class="muted">갱신형만 있음</span>':`<span class="mini">${['N','R'].map(t=>`<button class="${type===t?'on':''}" data-act="adjType" data-cat="${cat}" data-v="${t}" ${types.includes(t)?'':'disabled'}>${t==='N'?'비갱신':'갱신'}</button>`).join('')}</span>`}</td>
+      <td>${AMT[cat].length>1?`<select data-adj="amt" data-cat="${cat}">${AMT[cat].map(v=>`<option value="${v}" ${v===amt?'selected':''}>${amtLabel(cat,v)}</option>`).join('')}</select>`:'<span class="muted">표준형</span>'}</td>
+      <td>${on?won(premAt({cat,type,amt},S.r.age))+(cat==='pension'?' <span class="muted small">(적립)</span>':''):'-'}</td></tr>`;}).join('')}</table>
+    ${S.custom?'<div style="margin-top:.6rem"><button class="link" data-act="resetAdj">조정 초기화</button></div>':''}`;
+}
+function ensureCustom(){
+  if (S.custom) return;
+  const an=analyze(), needs=an.filter(x=>x.need).map(x=>x.cat), c=getCombos(needs)[S.sel||'B'];
+  S.custom=c.items.map(x=>({...x}));
+}
+
+/* ---------------- 화면: 여행 ---------------- */
+function vTravelForm(){
+  const t=S.t;
+  if (!t.depart){ const d=new Date(); d.setDate(d.getDate()+14); t.depart=d.toISOString().slice(0,10); }
+  const opts=(k,obj)=>`<div class="seg">${Object.entries(obj).map(([v,l])=>`<button class="${t[k]===v?'on':''}" data-act="setT" data-k="${k}" data-v="${v}">${typeof l==='string'?l:l.label}</button>`).join('')}</div>`;
+  return `<div class="rf"><h2 class="title">어떤 여행이에요?</h2><div class="sub" style="margin-bottom:1rem">여행지와 일정에 따라 꼭 필요한 보장이 달라요.</div>
+  <div class="card">
+    <div class="field"><span class="flabel">어디로 가요?</span>${opts('dest',DEST)}</div>
+    <div class="grid3">
+      <div class="field"><span class="flabel">출발일</span><input type="date" value="${t.depart}" data-tf="depart"></div>
+      <div class="field"><span class="flabel">며칠 동안?</span><input type="number" min="1" max="90" value="${t.days}" data-tf="days" style="width:6rem"> 일</div>
+      <div class="field"><span class="flabel">내 나이</span><input type="number" min="1" max="90" value="${t.age}" data-tf="age" style="width:6rem"> 세</div>
+    </div>
+    <div class="field"><span class="flabel">누구와 가요?</span>${opts('who',WHO)}</div>
+    <div class="field" style="margin-bottom:0"><span class="flabel">여행 스타일</span>${opts('style',STYLE)}</div>
+  </div>
+  <div class="row"><button class="btn" data-act="go" data-v="travel-result">필요한 보장 보기</button><button class="btn ghost" data-act="home">뒤로</button></div></div>`;
+}
+function tNeeds(){
+  const t=S.t, d=DEST[t.dest], out=[];
+  const medMin=t.who==='parents'?Math.max(d.med,5000):d.med;
+  out.push({k:'med', level:'필수', min:medMin, reason: t.dest==='us'?'미국·캐나다는 병원비가 매우 비싸요. 의료비 한도는 1억 원 이상이 안전해요.':t.dest==='eu'||t.dest==='oc'?'의료비가 높은 지역이라 5천만 원 이상을 권해요.':(t.who==='parents'?'부모님과 함께라 질병 의료비를 넉넉히(5천만 원 이상) 잡는 게 좋아요.':'가까운 나라라도 입원하면 비용이 커요. 최소 3천만 원은 챙기세요.')});
+  out.push({k:'delay', level:t.days<=3?'참고':'권장', min:10, reason:'국제선이 2시간 이상 늦거나 결항되면 늦어진 시간만큼 정액으로 보상받는 특약이에요.'});
+  out.push({k:'bag', level:(t.style==='backpack'||t.dest==='eu')?'권장':'참고', min:(t.style==='backpack'||t.dest==='eu')?50:20, reason:(t.style==='backpack'||t.dest==='eu')?'배낭여행이나 유럽 여행은 소지품 분실·도난 대비가 중요해요. 50만원 이상 권장.':'분실·도난에 대비한 기본 보장이에요.'});
+  out.push({k:'rescue', level:(t.who==='parents'||t.style==='activity'||t.dest==='us')?'권장':'참고', min:5000, reason:'현지에서 크게 다치거나 아프면 한국으로 옮기는 비용이 커요.'+(t.who==='parents'?' 부모님과 함께라면 꼭 챙기세요.':'')});
+  out.push({k:'death', level:t.style==='activity'?'권장':'참고', min:t.style==='activity'?20000:10000, reason:t.style==='activity'?'액티비티는 다칠 위험이 커요. 단, 스카이다이빙 같은 위험 레저는 보상이 안 될 수 있어 약관 확인이 필요해요.':(t.who==='kids'?'15세 미만 아이는 사망 담보 가입이 안 돼서, 아이는 이 담보가 빠진 채로 가입돼요.':'기본으로 들어가는 보장이에요.')});
+  out.push({k:'liab', level:t.style==='biz'?'권장':'참고', min:t.style==='biz'?1000:500, reason:'실수로 남의 물건을 망가뜨리거나 다치게 했을 때 대신 물어줘요.'});
+  return out;
+}
+const tAgeF = a => a<15?0.7:a<40?1:a<60?1.25:a<70?1.6:2.2;
+const tPrice = (p,age) => Math.round(p.daily*Math.pow(S.t.days,0.8)*DEST[S.t.dest].f*tAgeF(age)/10)*10;
+const tVal = (k,v) => k==='delay'?(v?`최대 ${v}만원`:'없음'):k==='bag'?`${v}만원`:manU(v);
+function vTravelResult(){
+  const t=S.t, needs=tNeeds();
+  const ev=PLANS.map(p=>{ const must=needs.filter(n=>n.level==='필수').every(n=>p.c[n.k]>=n.min);
+    const rec=needs.filter(n=>n.level==='권장'&&p.c[n.k]>=n.min).length; return {...p, must, rec, price:tPrice(p,t.age)}; });
+  const ok=ev.filter(p=>p.must);
+  const best=ok.slice().sort((a,b)=>b.rec-a.rec||a.price-b.price)[0];
+  const cheap=ok.slice().sort((a,b)=>a.price-b.price)[0];
+  const nRec=needs.filter(n=>n.level==='권장').length;
+  if (!t.depart){ const d=new Date(); d.setDate(d.getDate()+14); t.depart=d.toISOString().slice(0,10); }
+  const dep=new Date(t.depart), remind=new Date(dep); remind.setDate(dep.getDate()-3);
+  const fmtD=d=>`${d.getMonth()+1}월 ${d.getDate()}일`;
+  return `<div class="rr"><div class="row" style="justify-content:space-between;margin-bottom:1rem"><div class="summary">${DEST[t.dest].label}, ${t.days}일, ${WHO[t.who]}, ${STYLE[t.style]}</div><button class="btn ghost sm" data-act="go" data-v="travel-form">조건 바꾸기</button></div>
+  <div class="card"><h2>이 여행에 필요한 보장</h2><div class="sub" style="margin-bottom:.8rem">여행지·동행·스타일을 보고 중요한 순서로 정리했어요.</div>
+    <table class="tneeds">${needs.sort((a,b)=>['필수','권장','참고'].indexOf(a.level)-['필수','권장','참고'].indexOf(b.level)).map(n=>`<tr><td style="width:32%"><b>${TCOV.find(c=>c.k===n.k).label}</b><div class="lvl l-${n.level}">${n.level}</div></td><td>${n.level!=='참고'?`<b>${tVal(n.k,n.min)} 이상</b> · `:''}${n.reason}</td></tr>`).join('')}</table></div>
+  <div class="card"><h2>보장 수준별 비교</h2><div class="sub" style="margin-bottom:.8rem">특정 보험사 상품이 아니라 보장 수준별 예시이고, 초록색은 기준을 채운 항목, 빨간색은 부족한 항목이에요.</div>
+    <div class="scroll"><table class="plan"><tr><th></th>${ev.map(p=>`<th class="${p===best?'best':''}" style="color:var(--ink)"><b>${p.name.replace('해외여행보험 ','')}</b>${p===best?'<div class="tag t-ok">필요한 보장을 모두 채워요</div>':p===cheap?'<div class="tag t-N">필수 보장을 채운 것 중 가장 싸요</div>':!p.must?'<div class="tag t-gap">필수 보장이 부족해요</div>':''}</th>`).join('')}</tr>
+    <tr><td><b>예상 보험료 (1인)</b></td>${ev.map(p=>`<td class="${p===best?'best':''}"><b style="font-size:1.25rem">${won(p.price)}</b></td>`).join('')}</tr>
+    ${TCOV.map(c=>{const n=needs.find(x=>x.k===c.k); return `<tr><td>${c.label} <span class="lvl l-${n.level}">${n.level}</span></td>${ev.map(p=>{const v=p.c[c.k], good=n.level==='참고'?null:v>=n.min; return `<td class="${p===best?'best ':''}${good===true?'ok':good===false?'no':''}">${tVal(c.k,v)}</td>`;}).join('')}</tr>`;}).join('')}
+    <tr><td>특징</td>${ev.map(p=>`<td class="small ${p===best?'best':''}">${p.perk}</td>`).join('')}</tr>
+    <tr><td>권장 보장 충족</td>${ev.map(p=>`<td class="${p===best?'best':''}">${p.rec} / ${nRec}</td>`).join('')}</tr>
+    ${t.who==='parents'?`<tr><td>부모님 (70세 기준)</td>${ev.map(p=>`<td class="${p===best?'best':''}">${won(tPrice(p,70))}</td>`).join('')}</tr>`:''}
+    ${t.who==='kids'?`<tr><td>아이 (8세, 사망 담보 제외)</td>${ev.map(p=>`<td class="${p===best?'best':''}">${won(tPrice(p,8))}</td>`).join('')}</tr>`:''}
+    </table></div>
+    <div class="sub" style="margin-top:.8rem">실제 가입은 보험사나 등록된 설계사에게 이 보장 기준을 보여주고 상담하시면 돼요.</div></div>
+  <div class="card"><div class="row" style="justify-content:space-between"><div><b>출국 3일 전에 알려드릴까요?</b><div class="sub">${fmtD(remind)}에 "아직 여행자보험 안 드셨어요" 알림을 보내드려요.</div></div><button class="btn ghost sm" data-act="remind" data-v="${fmtD(remind)}">알림 받기</button></div></div>
+  ${t.who==='parents'?`<div class="cta"><div style="flex:1"><b style="font-size:1.1rem">부모님과 함께 가시네요</b><div class="sub">여행 뒤에 부모님 보험이 80대까지 괜찮은지도 확인해 보세요.</div></div><button class="btn" data-act="goParent">부모님 보장 점검하기</button></div>`
+   :`<div class="cta"><div style="flex:1"><b style="font-size:1.1rem">내 보험도 점검해 볼까요?</b><div class="sub">지금 든 보험이 80대까지 괜찮은지 몇 분이면 확인할 수 있어요.</div></div><button class="btn" data-act="go" data-v="retire-form">노후 보장 점검하기</button></div>`}</div>`;
+}
+
+/* ---------------- 렌더 & 이벤트 ---------------- */
+const VIEWS={'home':vHome,'pro':vPro,'goals':vGoals,'pro-demo':vProDemo,'retire-form':vRetireForm,'retire-result':vRetireResult,'travel-form':vTravelForm,'travel-result':vTravelResult};
+function render(scrollTop){ $('#app').innerHTML=VIEWS[S.view](); if (scrollTop) window.scrollTo(0,0); }
+function go(v){ S.view=v; render(true); }
+const ACT={
+  home:()=>{S.forParent=false; S.pro=null; go('home');},
+  openClient:v=>{ const c=CLIENTS[+v]; Object.assign(S.r,c.r,{imported:true,loading:false}); S.r.existing=[...c.r.existing]; S.forParent=false; S.pro=c.name; S.sel=null; S.custom=null; S.snap=75; go('retire-result'); },
+  go:v=>{ if (v==='retire-form'){ S.step=0; if (S.view==='home') S.forParent=false; } go(v); },
+  step:v=>{ S.step=Math.max(0,Math.min(3,(S.step||0)+(+v))); render(true); },
+  age:v=>{ S.r.age=Math.max(45,Math.min(75,S.r.age+(+v))); S.sel=null; S.custom=null; render(); },
+  goParent:()=>{ S.pro=null; S.step=0; S.forParent=true; S.r.age=68; S.r.health='meds'; S.r.target=90; S.r.concerns=[]; S.r.imported=false; S.r.existing=[]; S.sel=null; S.custom=null; go('retire-form'); },
+  big:()=>{ S.big=!S.big; document.documentElement.classList.toggle('big',S.big); $('#bigBtn').classList.toggle('on',S.big); },
+  setR:(v,el)=>{ const k=el.dataset.k; S.r[k]=['target','budget','age'].includes(k)?+v:v; S.sel=null; S.custom=null; render(); },
+  setT:(v,el)=>{ S.t[el.dataset.k]=v; render(); },
+  concern:v=>{ const c=S.r.concerns; S.r.concerns=c.includes(v)?c.filter(x=>x!==v):[...c,v]; S.sel=null; S.custom=null; render(); },
+  import:()=>{ if (S.forParent) toast('부모님께 카카오톡으로 인증 요청을 보냈어요 (데모)'); S.r.loading=true; render(); setTimeout(()=>{ S.r.loading=false; S.r.imported=true; S.r.existing=EXIST.map(e=>e.id); S.sel=null; S.custom=null; render(); },S.forParent?2200:1100); },
+  demo:()=>{ Object.assign(S.r,{age:55,gender:'M',health:'meds',target:90,budget:30,concerns:['medical','cancer','dementia','care','pension'],imported:true,existing:['e1','e2','e3']}); S.sel=null; S.custom=null; S.snap=85; render(); toast('55세 남성, 혈압약 복용, 90세까지 보장, 월 30만원 예산'); },
+  pick:v=>{ S.sel=v; render(); },
+  demoResult:()=>{ S.pro=null; S.forParent=false; ACT.demo(); go('retire-result'); },
+  snap:v=>{ S.snap=+v; render(); },
+  adjType:(v,el)=>{ ensureCustom(); const cat=el.dataset.cat; const it=S.custom.find(x=>x.cat===cat); if (it) it.type=v; else S.custom.push({cat,type:v,amt:AMT[cat][Math.min(1,AMT[cat].length-1)]}); S.sel='D'; render(); },
+  resetAdj:()=>{ S.custom=null; S.sel=null; render(); },
+  share:()=>openShare(),
+  print:()=>window.print(),
+  fill:()=>{ S.fillOpen=!S.fillOpen; render(); },
+  pro:()=>toast('2주 무료 체험을 시작했어요 (데모)'),
+  proGA:()=>toast('단체 요금 문의를 받았어요 (데모)'),
+  joinT:v=>toast(`${v} 가입 화면으로 연결돼요 (데모)`),
+  remind:v=>toast(`${v}에 알림을 보내드릴게요 (데모)`),
+  closeModal:()=>document.querySelector('.modal-bg')?.remove(),
+  copy:()=>{ const txt=$('#shareTxt').innerText; navigator.clipboard?.writeText(txt).then(()=>toast('복사했어요'),()=>toast('복사했어요')); }
+};
+document.addEventListener('click',e=>{ const el=e.target.closest('[data-act]'); if (!el||el.disabled) return; e.preventDefault(); ACT[el.dataset.act]?.(el.dataset.v, el); });
+document.addEventListener('input',e=>{
+  const el=e.target;
+  if (el.dataset.range==='age'){ S.r.age=+el.value; $('#ageV').textContent=el.value; S.sel=null; S.custom=null; }
+  if (el.dataset.range==='snap'){ S.snap=+el.value; const an=analyze(), needs=an.filter(x=>x.need).map(x=>x.cat), cs=getCombos(needs), sel=cs[S.sel]; $('#snapBox').innerHTML=snapHTML(sel); $('#ganttBox').innerHTML=ganttHTML(sel,an); $('#chartBox').innerHTML=premChart(cs); }
+});
+document.addEventListener('change',e=>{
+  const el=e.target;
+  if (el.dataset.ex){ const id=el.dataset.ex, ex=S.r.existing; S.r.existing=el.checked?[...ex,id]:ex.filter(x=>x!==id); S.sel=null; S.custom=null; }
+  if (el.dataset.tf){ S.t[el.dataset.tf]=el.type==='number'?Math.max(1,+el.value||1):el.value; }
+  if (el.dataset.adj){ ensureCustom(); const cat=el.dataset.cat; let it=S.custom.find(x=>x.cat===cat);
+    if (el.dataset.adj==='on'){ if (el.checked && !it){ const types=Object.keys(PROD[cat]); S.custom.push({cat,type:types.includes('N')?'N':types[0],amt:AMT[cat][Math.min(1,AMT[cat].length-1)]}); } if (!el.checked) S.custom=S.custom.filter(x=>x.cat!==cat); }
+    if (el.dataset.adj==='amt' && it) it.amt=+el.value;
+    S.custom.sort((a,b)=>CATS.indexOf(a.cat)-CATS.indexOf(b.cat)); S.sel='D'; render(); }
+});
+function openShare(){
+  const r=S.r, who=S.forParent?'부모님':'나', T=r.target, ex=EXIST.filter(e=>r.existing.includes(e.id));
+  const lines=SITU.map(([cat,q])=>{ const e=ex.filter(x=>x.cat===cat).sort((a,b)=>b.end-a.end)[0];
+    return `- ${q}: ${!e?'못 받아요':e.end>=T?'받아요 ('+e.pays+')':e.end+'세까지만 받아요'}`; }).join('\n');
+  const txt=`[돈 워리] ${who} 보험 보장 확인
+${r.age}세 · ${T}세까지 기준
+
+이런 일이 생기면
+${r.imported?lines:'- 아직 보험을 불러오지 않았어요'}
+
+자세히 보기: donworry.app/s/7KQ2M (데모 링크)`;
+  const d=document.createElement('div'); d.className='modal-bg'; d.innerHTML=`<div class="modal"><h2>가족에게 공유하기</h2><div class="sub small" style="margin-bottom:.6rem">카카오톡이나 문자로 보내면 가족이 같은 화면을 볼 수 있어요.</div><pre id="shareTxt">${txt}</pre><div class="row"><button class="btn" data-act="copy">내용 복사</button><button class="btn ghost" data-act="closeModal">닫기</button></div></div>`;
+  d.addEventListener('click',e=>{ if (e.target===d) d.remove(); });
+  document.body.appendChild(d);
+}
+render();
+</script>
+</body>
+</html>
